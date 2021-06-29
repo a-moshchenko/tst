@@ -28,7 +28,7 @@ def login():
         print("auth form, OK")
     except:
         print("auth form, NotOK")
-    logmail = browser.find_element_by_xpath("//form/div/input")
+    logmail = browser.find_element_by_xpath("//input[@type='text']")
     logmail.send_keys("autotestuser1672@mail.com")
     passwd = browser.find_element_by_xpath("//div[3]/input")
     passwd.send_keys("secretZ1")

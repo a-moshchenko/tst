@@ -25,9 +25,9 @@ def general_run():
     open()
     login_opn()
     sleep(1)
-    browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div/div/input[1]").send_keys(
+    browser.find_element_by_xpath("//input[@type='text']").send_keys(
         AUTHNAME)  # вводим мейл пользователя
-    browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div/div/input[2]").send_keys(
+    browser.find_element_by_xpath("(//input[@type='text'])[2]").send_keys(
         "LoremIpsum")  # вводим имя пользователя
     browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div/div/div[4]/input").send_keys(
         PASSWORD)  # вводим пароль
@@ -37,7 +37,7 @@ def general_run():
         "/html/body/div/div[2]/div/section/div/form/div/div/input[4]")  # определяем элемент чкубокс terms&conditions
     browser.execute_script("arguments[0].click();", TC)  # соглашаемся с T&C
     for i in range(12):
-        sleep(1)
+        sleep(2)
         try:
             login_button = browser.find_element_by_xpath(
                 "/html/body/div/div[2]/div/section/div/form/div/div/div[8]/button")
