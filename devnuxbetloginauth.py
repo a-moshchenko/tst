@@ -3,49 +3,47 @@ import random
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-ep = r"C:\chromedriver\chromedriver" # Тут указать путь к файлу драйвера браузера
-browser = webdriver.Chrome(executable_path=ep)
-results = ("check, result")
-print(results)
-def randnum():
-    #генерит рандомную строку из четырех цыфр
-    a = ""
-    for i in range (4):
-        a += str(random.randint(1,9))
-    return a
-uname = "autotestuser" + randnum()
+SITE = "https://dev.nuxbet.com/"  # url сайта, на котором будем проводить тест
+EP = r"C:\chromedriver\chromedriver"  # Тут указать путь к файлу драйвера браузера
+browser = webdriver.Chrome(executable_path=EP)
+RESULTS = ("check, result")
+print(RESULTS)
 
-def finalChecks():
+
+def randnum():
+    # генерит рандомную строку из четырех цыфр
+    a = ""
+    for i in range(4):
+        a += str(random.randint(1, 9))
+    return a
+
+
+Uname = "autotestuser" + randnum()
+PASSWD = "secretZ1"
+REFCODE = "QwERty123!@#"
+
+
+def final_checks():
     # Проверяет имя пользователя в форме регистрации
     print("userMail, OK")
     print("userName, OK")
-    if browser.find_element_by_xpath("//div[4]/input").get_attribute("value") == "secretZ1":
+    if browser.find_element_by_xpath("//div[4]/input").get_attribute("value") == PASSWD:
         print("password visibility, OK")
     else:
         print("password visibility, NotOK")
-    if browser.find_element_by_xpath("//div[6]/input").get_attribute("value") == "secretZ1":
+    if browser.find_element_by_xpath("//div[6]/input").get_attribute("value") == PASSWD:
         print("passwordCon visibility, OK")
     else:
         print("passwordCon visibility, NotOK")
 
 
-
-
-def open():
-    site = "https://dev.nuxbet.com/"
-    browser.get(site)
+def open(SITE):
+    browser.get(SITE)
     browser.set_window_size(1086, 1020)
     sleep(2)
 
-def close():
-    # Закрывает окно браузера
-    browser.close()
 
-def registrValid():
-    # Выполняет регистрацию пользователя по позитив флоу с валидными даными
-    regi = browser.find_element_by_class_name("regBtn")
-    regi.click()
-    sleep(1)
+def auth_form_check():
     try:
         # Проверяем наличие формы авторизации
         browser.find_element_by_class_name("authForm")
@@ -53,92 +51,116 @@ def registrValid():
     except:
         # если формы нет - закрываем окно браузера и выводим ерор
         print("authForm, NoPopUp")
-        close()
+        browser.close()
+
+
+def email_input():
     try:
         # Вводим емайл
-        emailInput = browser.find_element_by_xpath("//form/div/div/input")
-        emailInput.click()
-        emailInput.send_keys(str(uname+ "@mail.com"))
+        email_input_field = browser.find_element_by_xpath("//form/div/div/input")
+        email_input_field.click()
+        email_input_field.send_keys(str(Uname + "@mail.com"))
     except:
         print("E-mail input, ERROR")
 
+
+def username_input():
     try:
         # Вводим юзернейм
-        userLogin = browser.find_element_by_xpath("//input[2]")
-        userLogin.click()
-        userLogin.send_keys(uname)
+        username_field = browser.find_element_by_xpath("//input[2]")
+        username_field.click()
+        username_field.send_keys(Uname)
     except:
         print("login input, ERROR")
+
+
+def password_visibility_check():
+    try:
+        # Проверяем нескрытое отображение пароля
+        password_field = browser.find_element_by_xpath("//div[4]/div")
+        password_field.click()
+        password_confirm_field = browser.find_element_by_xpath("//div[6]/div")
+        password_confirm_field.click()
+        sleep(1)
+    except:
+        print("Visible password ERROR")
+
+
+def password_and_confirmation_input():
     try:
         # Вводим пароль и подтверждение
-        pwd = browser.find_element_by_xpath("//div[4]/input")
-        pwd.click()
-        pwd.send_keys("secretZ1")
+        password_field = browser.find_element_by_xpath("//div[4]/input")
+        password_field.click()
+        password_field.send_keys(PASSWD)
         sleep(1)
-        pwd.send_keys(Keys.TAB)
-
-        pwdConfirm = browser.find_element_by_xpath("//div[6]/input")
-        pwdConfirm.click()
-        pwdConfirm.send_keys("secretZ1")
-
-        try:
-            # Проверяем нескрытое отображение пароля
-            showPwd = browser.find_element_by_xpath("//div[4]/div")
-            showPwd.click()
-            showPwdConf = browser.find_element_by_xpath("//div[6]/div")
-            showPwdConf.click()
-            sleep(1)
-
-        except:
-            print("Visible password ERROR")
+        password_field.send_keys(Keys.TAB)
+        password_confirm_field = browser.find_element_by_xpath("//div[6]/input")
+        password_confirm_field.click()
+        password_confirm_field.send_keys(PASSWD)
+        password_visibility_check()
     except:
         print("Password input Error")
 
+
+def refCode_input_and_Check():
     try:
-        refCode = browser.find_element_by_xpath("//div/input[3]")
-        refCode.send_keys("QwERty123!@#")
+        ref_code_field = browser.find_element_by_xpath("//div/input[3]")
+        ref_code_field.send_keys(REFCODE)
         sleep(1)
-        if refCode.get_attribute("value") == "QwERty123!@#":
+        if ref_code_field.get_attribute("value") == REFCODE:
             print("ref code, OK")
         else:
-            print("refCode: ", refCode.get_attribute("value"))
+            print("refCode: ", ref_code_field.get_attribute("value"))
     except:
         print("ref code, NotOK")
+
+
+def termsAndConditions_confirmation():
     try:
         # Соглашаемся с T&C
-        tc = browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div/div/input[4]")
-        browser.execute_script("arguments[0].click();", tc)
+        terms_checkbox = browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div/div/input[4]")
+        browser.execute_script("arguments[0].click();", terms_checkbox)
         print("T&C acepted, OK")
     except:
         print("T&C ERROR")
 
 
-    finalChecks()
-    registerBtn = browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div/div/div[8]/button")
-    registerBtn.click()
-
-    sleep(2)
-
+def registred_user_check():
     user = browser.find_element_by_xpath("//div[2]/div[3]")
-    if user.text == str(uname + "@mail.com"):
+    if user.text == str(Uname + "@mail.com"):
         print("main page return, OK")
     else:
         print("main page return, NotOK")
 
 
+def registr_valid():
+    # Выполняет регистрацию пользователя по позитив флоу с валидными даными
+    registration_button = browser.find_element_by_class_name("regBtn")
+    registration_button.click()
+    sleep(1)
 
-    print("Username: ", uname)
-    print("Usermail: ", uname, "@mail.com")
+    auth_form_check()
+    email_input()
+    username_input()
+    password_and_confirmation_input()
+    refCode_input_and_Check()
+    termsAndConditions_confirmation()
+    final_checks()
+
+    REGISTRATINFORMBUTTON = browser.find_element_by_xpath(
+        "/html/body/div/div[2]/div/section/div/form/div/div/div[8]/button")
+    REGISTRATINFORMBUTTON.click()
+
+    sleep(2)
+
+    registred_user_check()
+    print("Username: ", Uname)
+    print("Usermail: ", Uname, "@mail.com")
 
 
-
-
-
-
-
-
-open()
+open(SITE)
 try:
-    registrValid()
+    registr_valid()
 except:
     print("registration, registration Error")
+browser.close()
