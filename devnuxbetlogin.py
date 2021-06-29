@@ -3,10 +3,10 @@ import random
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-ep = r"C:\chromedriver\chromedriver"  # Тут указать путь к файлу драйвера браузера
-browser = webdriver.Chrome(executable_path=ep)
+EXECUTABLE_PATH = r"C:\chromedriver\chromedriver"  # Тут указать путь к файлу драйвера браузера
+browser = webdriver.Chrome(executable_path=EXECUTABLE_PATH)
 
-authname = "autotestuser1672@mail.com"
+AUTH_NAME_EXIST = "autotestuser1672@mail.com"
 
 def open():
     site = "https://dev.nuxbet.com/"
@@ -38,7 +38,7 @@ def login():
     sleep(2)
     try:
         uname = browser.find_element_by_xpath("//div[2]/div[3]")
-        if uname.text == authname:
+        if uname.text == AUTH_NAME_EXIST:
             print("auth, OK")
             print("main page return, OK")
         else:

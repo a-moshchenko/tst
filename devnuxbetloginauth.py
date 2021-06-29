@@ -4,8 +4,8 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 SITE = "https://dev.nuxbet.com/"  # url сайта, на котором будем проводить тест
-EP = r"C:\chromedriver\chromedriver"  # Тут указать путь к файлу драйвера браузера
-browser = webdriver.Chrome(executable_path=EP)
+EXECUTABLE_PATH = r"C:\chromedriver\chromedriver"  # Тут указать путь к файлу драйвера браузера
+browser = webdriver.Chrome(executable_path=EXECUTABLE_PATH)
 RESULTS = ("check, result")
 print(RESULTS)
 

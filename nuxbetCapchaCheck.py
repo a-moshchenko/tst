@@ -2,8 +2,8 @@ from time import sleep
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-EP = r"C:\chromedriver\chromedriver"  # Тут указать путь к файлу драйвера браузера
-browser = webdriver.Chrome(executable_path=EP)
+EXECUTABLE_PATH = r"C:\chromedriver\chromedriver"  # Тут указать путь к файлу драйвера браузера
+browser = webdriver.Chrome(executable_path=EXECUTABLE_PATH)
 
 AUTHNAME = "autotestuser1672@mail.com"
 PASSWORD = "secretZ1"
