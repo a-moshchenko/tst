@@ -147,9 +147,9 @@ def registr_valid():
     termsAndConditions_confirmation()
     final_checks()
 
-    REGISTRATINFORMBUTTON = browser.find_element_by_xpath(
+    registration_form_button = browser.find_element_by_xpath(
         "/html/body/div/div[2]/div/section/div/form/div/div/div[8]/button")
-    REGISTRATINFORMBUTTON.click()
+    registration_form_button.click()
 
     sleep(2)
 
