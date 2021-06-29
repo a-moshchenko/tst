@@ -2,21 +2,24 @@ from time import sleep
 import random
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import config
+import requests
 
-EXECUTABLE_PATH = r"C:\chromedriver\chromedriver"  # Тут указать путь к файлу драйвера браузера
-browser = webdriver.Chrome(executable_path=EXECUTABLE_PATH)
-PASSWORD = "secretZ1"
-AUTH_NAME_EXIST = "autotestuser1672@mail.com"
+browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
 
 def open():
-    site = "https://dev.nuxbet.com/"
-    browser.get(site)
+    browser.get(config.SITE)
     browser.set_window_size(1086, 1020)
-    sleep(2)
-
-def close():
-    # Закрывает окно браузера
-    browser.close()
+    try:
+        element = WebDriverWait(browser, 10).until(
+            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[4]/header"))
+        )
+    except:
+        print("page open, Error")
+        browser.close()
 
 def password_vizibility_check():
     # Проверяем отображение пароля при нажатии на глаз
@@ -25,7 +28,7 @@ def password_vizibility_check():
     password_vizible = str(browser.find_element_by_xpath("//div[3]/input").get_attribute("value"))
     try:
         print(password_vizible)
-        if password_vizible == PASSWORD:
+        if password_vizible == config.PASSWORD:
             print("password vizible, OK")
         else:
             print("password vizible, NotOK")
@@ -33,35 +36,56 @@ def password_vizibility_check():
         print("password vizible, Error")
         print(password_vizible)
 
-def login():
+def login_positiv_flow():
     open()
-    sleep(2)
-    logBtn = browser.find_element_by_xpath("//div[3]/a")
-    logBtn.click()
+    browser.find_element_by_xpath("//div[3]/a").click()
+
     try:
         browser.find_element_by_css_selector(".formHeader")
         print("auth form, OK")
     except:
         print("auth form, NotOK")
     logmail = browser.find_element_by_xpath("//input[@type='text']")
-    logmail.send_keys("autotestuser1672@mail.com")
+    logmail.send_keys(config.AUTH_NAME_EXIST)
     passwd = browser.find_element_by_xpath("//input[@type='password']")
-    passwd.send_keys(PASSWORD)
-    sleep(1)
+    passwd.send_keys(config.PASSWORD)
+    sleep(1) # слип нужен, чтоб изменения отобразились в браузере
     password_vizibility_check()
     logbtn = browser.find_element_by_xpath("//form/div[2]/button")
     logbtn.click()
     sleep(2)
     try:
         uname = browser.find_element_by_xpath("//div[2]/div[3]")
-        if uname.text == AUTH_NAME_EXIST:
+        if uname.text == config.AUTH_NAME_EXIST:
             print("auth, OK")
             print("main page return, OK")
+            log_out()
         else:
             print("NOK, uname: ", uname.text)
     except:
         print("auth, NotOK")
 
-login()
+def log_out():
+    try:
+        element = WebDriverWait(browser, 10).until(
+            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[4]/header"))
+        )
+    except:
+        print("page open, Error")
+        browser.close()
+    print("page loaded")
+    browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/span[2]").click()
+    sleep(1)
+    browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/div[2]/a[7]").click()
+"""
+def login_negative_flow():
+    open()
+    login_button = browser.find_element_by_xpath("//div[3]/a")
+    login_button.click()
+"""
+
+login_positiv_flow()
+browser.refresh()
+log_out()
 
 
