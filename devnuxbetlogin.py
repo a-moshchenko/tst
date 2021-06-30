@@ -6,7 +6,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import config
-import requests
 
 browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
 
@@ -27,7 +26,6 @@ def password_vizibility_check():
     sleep(1)
     password_vizible = str(browser.find_element_by_xpath("//div[3]/input").get_attribute("value"))
     try:
-        print(password_vizible)
         if password_vizible == config.PASSWORD:
             print("password vizible, OK")
         else:
@@ -59,11 +57,11 @@ def login_positiv_flow():
         if uname.text == config.AUTH_NAME_EXIST:
             print("auth, OK")
             print("main page return, OK")
-            log_out()
         else:
             print("NOK, uname: ", uname.text)
     except:
         print("auth, NotOK")
+    log_out()
 
 def log_out():
     try:
@@ -74,18 +72,65 @@ def log_out():
         print("page open, Error")
         browser.close()
     print("page loaded")
-    browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/span[2]").click()
-    sleep(1)
-    browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/div[2]/a[7]").click()
-"""
+    try:
+        browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/span[2]").click()
+        sleep(1)
+        browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/div[2]/a[7]").click()
+    except:
+        print("loged out")
+
 def login_negative_flow():
     open()
-    login_button = browser.find_element_by_xpath("//div[3]/a")
-    login_button.click()
-"""
+    browser.find_element_by_xpath("//div[3]/a").click()
+    try:
+        browser.find_element_by_css_selector(".formHeader")
+        print("auth form, OK")
+    except:
+        print("auth form, NotOK")
+    logmail = browser.find_element_by_xpath("//input[@type='text']") # проверка почты без собаки и незаполненный пароль
+    logmail.send_keys("noatmail")
+    logbtn = browser.find_element_by_xpath("//form/div[2]/button")
+    logbtn.click()
+    sleep(1) # слип нужен чтоб форма обновилась
+    if str(logmail.get_attribute("class")) == "inputError":
+        print("mail !@, OK")
+    else: print("mail !@, NotOK")
+    if str(browser.find_element_by_xpath("//div[1]/div[4]/input").get_attribute("class")) == "inputError":
+        print("no password, OK")
+    else:
+        print("no password, NotOK")
+    if str(browser.page_source).find("Enter valid email address") >0 :
+        print("mail error messaage, OK")
+    else: print("mail error messaage, OK")
+    if str(browser.page_source).find("This field is required") >0 :
+        print("empty field message, OK")
+    else: print("empty field messaage, OK")
+
+    logmail = browser.find_element_by_xpath("//input[@type='text']")  # проверка валидной почты с незаполненным паролем
+    logmail.send_keys(config.AUTH_NAME_EXIST)
+    logbtn = browser.find_element_by_xpath("//form/div[2]/button")
+    logbtn.click()
+    sleep(1)  # слип нужен чтоб форма обновилась
+    if str(logmail.get_attribute("class")) != "inputError":
+        print("valid mail, OK")
+    else: print("valid mail, NotOK")
+    browser.refresh()
+
+    logmail = browser.find_element_by_xpath("//input[@type='text']")  # проверка валидной почты с неверным паролем
+    logmail.send_keys(config.AUTH_NAME_EXIST)
+    logbtn = browser.find_element_by_xpath("//form/div[2]/button")
+    passwd = browser.find_element_by_xpath("//input[@type='password']")
+    passwd.send_keys("password")
+    logbtn.click()
+    sleep(1)  # слип нужен чтоб форма обновилась
+    if str(browser.page_source).find("Incorrect login or password. Please check again."):
+        print("invalid password message, OK")
+    else: print("invalid password message, NotOK")
+    browser.refresh()
 
 login_positiv_flow()
 browser.refresh()
-log_out()
+login_negative_flow()
+browser.close()
 
 
