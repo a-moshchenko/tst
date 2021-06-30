@@ -1,4 +1,5 @@
 from time import sleep
+from datetime import date
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -7,6 +8,8 @@ from selenium.webdriver.support import expected_conditions as EC
 import config
 
 browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
+current_date = date.today()
+data = current_date.strftime("%d,%m,%Y")
 print("check, result")
 
 def open():
@@ -14,7 +17,7 @@ def open():
     browser.set_window_size(1086, 1020)
     try:
         element = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[4]/header"))
+            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[2]/div"))
         )
     except:
         print("page open, Error")
@@ -56,6 +59,7 @@ def password_confirmation_error():
     password_confirn_field.send_keys("secretZ2")
     password_confirn_color = password_confirn_field.get_attribute("class")
     if password_confirn_color == "inputError":
+        browser.save_screenshot(str(current_date)+"PasswordConfirmationDevNuxbet.png")
         print("confirmation, OK")
     else:
         print("confirmation, NotOK")
@@ -70,6 +74,7 @@ def invalid_email_error():
     registration_button = browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div/div/div[8]/button")
     registration_button.click()
     if email_field.get_attribute("class") == "inputError":
+        browser.save_screenshot(str(current_date)+"NoEtMailDevNuxbet.png")
         print("no at mail, OK")
     else:
         print("no at mail, NotOK")
@@ -80,13 +85,16 @@ def invalid_email_error():
 
     # Вводим емайл без домена
     open()
+    sleep(1)
     register_open()
+    sleep(1)
     email_field = browser.find_element_by_xpath("//form/div/div/input")
     email_field.click()
     email_field.send_keys("qwertry@")
     registration_button = browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div/div/div[8]/button")
     registration_button.click()
     if email_field.get_attribute("class") == "inputError":
+        browser.save_screenshot(str(current_date)+"NoDomainMailDevNuxbet.png")
         print("no domain mail, OK")
     else:
         print("no domain mail, NotOK")
@@ -94,6 +102,7 @@ def invalid_email_error():
     # Вводим мейл с кириллицей
     open()
     register_open()
+    sleep(1)
     email_field = browser.find_element_by_xpath("//form/div/div/input")
     email_field.click()
     email_field.send_keys("почта@домен.сру")
@@ -106,12 +115,14 @@ def invalid_email_error():
     registration_button.click()
     sleep(1) # слип нужен чтоб дать форме измениться
     if str(browser.page_source).find("Wrong"):
+        browser.save_screenshot(str(current_date)+"CyrilykMailDevNuxbet.png")
         print("cyr mail, OK")
     else:
         print("cyr mail, NotOK")
 
     # Вводим мейл с пробелом
     open()
+    sleep(1)
     register_open()
     email_field = browser.find_element_by_xpath("//form/div/div/input")
     email_field.click()
@@ -125,6 +136,7 @@ def invalid_email_error():
 
     # Вводим ранее зарегистрированный мейл
     open()
+    sleep(1)
     register_open()
     email_field = browser.find_element_by_xpath("//form/div/div/input")
     email_field.click()
@@ -137,6 +149,7 @@ def invalid_email_error():
     registration_button = browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div/div/div[8]/button")
     registration_button.click()
     if str(browser.page_source).find("Username/Email already exist") > 0:
+        browser.save_screenshot(str(current_date)+"UsedMailDevNuxbet.png")
         print("used mail alert, OK")
     else:
         print("used mail alert, OK")
@@ -146,6 +159,7 @@ def req_fields_empty():
     # Проверка алертов на незаполненых обязательных полях
     open()
     register_open()
+    sleep(1)
     browser.find_element_by_xpath(
         "/html/body/div/div[2]/div/section/div/form/div/div/div[8]/button").click()  # нажимаем "зарегистрироваться" в форме регистрации
     sleep(1) # нужен чтоб форма успела обновиться
@@ -172,6 +186,7 @@ def req_fields_empty():
         print("req pwdConf alert, NotOK")
     if str(browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div/div/label").get_attribute(
             "class")) == "inputError":  # проверяем наличие ворнинга в боксе T&C
+        browser.save_screenshot(str(current_date)+"EmptyFieldsDevNuxbet.png")
         print("req T&C alert, OK")
     else:
         print("req T&C alert, NotOK")

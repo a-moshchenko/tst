@@ -1,4 +1,5 @@
 from time import sleep
+from datetime import date
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -8,6 +9,8 @@ import config
 
 EXECUTABLE_PATH = r"C:\chromedriver\chromedriver"  # Тут указать путь к файлу драйвера браузера
 browser = webdriver.Chrome(executable_path=EXECUTABLE_PATH)
+current_date = date.today()
+data = current_date.strftime("%d,%m,%Y")
 
 def open():
     browser.get(config.SITE)
@@ -47,6 +50,7 @@ def general_run():
             login_button.click()
         except:
             print("Capcha, OK")
+            browser.save_screenshot(str(data)+"Capchadevnuxbet.png")
             break
 
 

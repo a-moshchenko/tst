@@ -1,5 +1,5 @@
 from time import sleep
-import random
+from datetime import date
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -8,13 +8,15 @@ from selenium.webdriver.support import expected_conditions as EC
 import config
 
 browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
+current_date = date.today()
+data = current_date.strftime("%d,%m,%Y")
 
 def open():
     browser.get(config.SITE)
     browser.set_window_size(1086, 1020)
     try:
         element = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[4]/header"))
+            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[2]/div"))
         )
     except:
         print("page open, Error")
@@ -27,6 +29,7 @@ def password_vizibility_check():
     password_vizible = str(browser.find_element_by_xpath("//div[3]/input").get_attribute("value"))
     try:
         if password_vizible == config.PASSWORD:
+            browser.save_screenshot(str(data) + "VisiblrPasswordDevNuxbet.png")
             print("password vizible, OK")
         else:
             print("password vizible, NotOK")
@@ -57,6 +60,7 @@ def login_positiv_flow():
         if uname.text == config.AUTH_NAME_EXIST:
             print("auth, OK")
             print("main page return, OK")
+            browser.save_screenshot(str(data) + "UserLogedInDevNuxbet.png")
         else:
             print("NOK, uname: ", uname.text)
     except:
@@ -93,6 +97,7 @@ def login_negative_flow():
     logbtn.click()
     sleep(1) # слип нужен чтоб форма обновилась
     if str(logmail.get_attribute("class")) == "inputError":
+        browser.save_screenshot(str(data) + "NoEtMailLoginDevNuxbet.png")
         print("mail !@, OK")
     else: print("mail !@, NotOK")
     if str(browser.find_element_by_xpath("//div[1]/div[4]/input").get_attribute("class")) == "inputError":
@@ -112,6 +117,7 @@ def login_negative_flow():
     logbtn.click()
     sleep(1)  # слип нужен чтоб форма обновилась
     if str(logmail.get_attribute("class")) != "inputError":
+        browser.save_screenshot(str(data) + "NoMailDevNuxbet.png")
         print("valid mail, OK")
     else: print("valid mail, NotOK")
     browser.refresh()
@@ -124,6 +130,7 @@ def login_negative_flow():
     logbtn.click()
     sleep(1)  # слип нужен чтоб форма обновилась
     if str(browser.page_source).find("Incorrect login or password. Please check again."):
+        browser.save_screenshot(str(data) + "WrongPasswordLoginPasswordDevNuxbet.png")
         print("invalid password message, OK")
     else: print("invalid password message, NotOK")
     browser.refresh()

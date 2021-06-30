@@ -1,5 +1,6 @@
 from time import sleep
 import random
+from datetime import date
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -8,6 +9,8 @@ from selenium.webdriver.support import expected_conditions as EC
 import config
 
 browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
+current_date = date.today()
+data = current_date.strftime("%d,%m,%Y")
 print("check, result")
 
 def randnum():
@@ -37,7 +40,7 @@ def open():
     browser.set_window_size(1086, 1020)
     try:
         element = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[4]/header"))
+            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[4]/div/div[1]/div/div/div[2]"))
         )
     except:
         print("page open, Error")
@@ -116,7 +119,7 @@ def password_and_confirmation_input():
         password_field.click()
         password_field.send_keys(config.PASSWD)
         password_field.send_keys(Keys.TAB)
-        password_confirm_field = browser.find_element_by_xpath("//input[@type='password'])[2]")
+        password_confirm_field = browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div/div/div[6]/input")
         password_confirm_field.click()
         password_confirm_field.send_keys(config.PASSWD)
         password_visibility_check()
@@ -163,6 +166,7 @@ def registr_valid():
 
     registration_form_button = browser.find_element_by_xpath(
         "/html/body/div/div[2]/div/section/div/form/div/div/div[8]/button")
+    browser.save_screenshot(str(current_date)+"NewUserDewnuxbet.png")
     registration_form_button.click()
 
     registred_user_check()
@@ -174,4 +178,4 @@ try:
     registr_valid()
 except:
     print("registration, registration Error")
-browser.close()
+#browser.close()

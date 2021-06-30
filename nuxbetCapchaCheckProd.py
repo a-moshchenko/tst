@@ -1,5 +1,6 @@
 from time import sleep
 from selenium import webdriver
+from datetime import date
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -8,13 +9,15 @@ import config
 
 EXECUTABLE_PATH = r"C:\chromedriver\chromedriver"  # Тут указать путь к файлу драйвера браузера
 browser = webdriver.Chrome(executable_path=EXECUTABLE_PATH)
+current_date = date.today()
+data = current_date.strftime("%d,%m,%Y")
 
 def open():
     browser.get("https://nuxbet.com/")
     browser.set_window_size(1086, 1020)
     try:
         element = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[4]/header"))
+            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[2]/div"))
         )
     except:
         print("page open, Error")
@@ -46,6 +49,7 @@ def general_run():
                 "//div[7]/button")
             login_button.click()
         except:
+            browser.save_screenshot(str(data) + "CapchaNuxbet.png")
             print("Capcha, OK")
             break
 
