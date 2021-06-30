@@ -23,17 +23,17 @@ def final_checks():
     # Проверяет имя пользователя в форме регистрации
     print("userMail, OK")
     print("userName, OK")
-    if browser.find_element_by_xpath("//div[4]/input").get_attribute("value") == config.PASSWD:
+    if browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/div[3]/input").get_attribute("value") == config.PASSWD:
         print("password visibility, OK")
     else:
         print("password visibility, NotOK")
-    if browser.find_element_by_xpath("//div[6]/input").get_attribute("value") == config.PASSWD:
+    if browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/div[5]/input").get_attribute("value") == config.PASSWD:
         print("passwordCon visibility, OK")
     else:
         print("passwordCon visibility, NotOK")
 
 def open():
-    browser.get(config.SITE)
+    browser.get("https://nuxbet.com/")
     browser.set_window_size(1086, 1020)
     try:
         element = WebDriverWait(browser, 10).until(
@@ -102,9 +102,9 @@ def username_input():
 def password_visibility_check():
     try:
         # Проверяем нескрытое отображение пароля
-        password_field = browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div/div/div[4]/div")
+        password_field = browser.find_element_by_css_selector(".passWrap:nth-child(4) > .showPass")
         password_field.click()
-        password_confirm_field = browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div/div/div[6]/div")
+        password_confirm_field = browser.find_element_by_css_selector(".passWrap:nth-child(6) > .showPass")
         password_confirm_field.click()
     except:
         print("Visible password ERROR")
@@ -116,7 +116,7 @@ def password_and_confirmation_input():
         password_field.click()
         password_field.send_keys(config.PASSWD)
         password_field.send_keys(Keys.TAB)
-        password_confirm_field = browser.find_element_by_xpath("//input[@type='password'])[2]")
+        password_confirm_field = browser.find_element_by_xpath("(//input[@type='password'])[2]")
         password_confirm_field.click()
         password_confirm_field.send_keys(config.PASSWD)
         password_visibility_check()
@@ -125,7 +125,7 @@ def password_and_confirmation_input():
 
 def refCode_input_and_Check():
     try:
-        ref_code_field = browser.find_element_by_xpath("//div/input[3]")
+        ref_code_field = browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/input[2]")
         ref_code_field.send_keys(config.REFCODE)
         if ref_code_field.get_attribute("value") == config.REFCODE:
             print("ref code, OK")
@@ -137,7 +137,7 @@ def refCode_input_and_Check():
 def termsAndConditions_confirmation():
     try:
         # Соглашаемся с T&C
-        terms_checkbox = browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div/div/input[4]")
+        terms_checkbox = browser.find_element_by_css_selector("label:nth-child(10)")
         browser.execute_script("arguments[0].click();", terms_checkbox)
         print("T&C acepted, OK")
     except:
@@ -155,14 +155,14 @@ def registr_valid():
     register_open()
     auth_form_check()
     email_input()
-    username_input()
+    #username_input()
     password_and_confirmation_input()
     refCode_input_and_Check()
     termsAndConditions_confirmation()
     final_checks()
 
     registration_form_button = browser.find_element_by_xpath(
-        "/html/body/div/div[2]/div/section/div/form/div/div/div[8]/button")
+        "/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/div[7]/button")
     registration_form_button.click()
 
     registred_user_check()
