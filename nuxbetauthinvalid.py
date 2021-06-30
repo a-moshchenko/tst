@@ -176,8 +176,21 @@ def req_fields_empty():
     else:
         print("req T&C alert, NotOK")
 
+def login_through_auth():
+    # проверка перехода на форму логина с формы регистрации
+    open()
+    register_open()
+    sleep(1)
+    browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/div[2]/a").click()
+    sleep(1) # ждем пока форма сменится
+    if str(browser.current_url) == "https://dev.nuxbet.com/login":
+        print("goto login, OK")
+    else:
+        print("goto login, NotOK")
+
 
 password_confirmation_error()
 invalid_email_error()
 req_fields_empty()
+login_through_auth()
 browser.close()
