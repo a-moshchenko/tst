@@ -143,7 +143,6 @@ def invalid_email_error():
     else:
         print("used mail alert, OK")
 
-
 def req_fields_empty():
     # Проверка алертов на незаполненых обязательных полях
     open()
@@ -189,7 +188,6 @@ def login_through_auth():
         print("goto login, OK")
     else:
         print("goto login, NotOK")
-
 
 password_confirmation_error()
 invalid_email_error()

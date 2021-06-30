@@ -177,6 +177,7 @@ def req_fields_empty():
         print("req T&C alert, NotOK")
 
 def login_through_auth():
+
     # проверка перехода на форму логина с формы регистрации
     open()
     register_open()
@@ -191,6 +192,7 @@ def login_through_auth():
 
 password_confirmation_error()
 invalid_email_error()
+
 req_fields_empty()
 login_through_auth()
 browser.close()

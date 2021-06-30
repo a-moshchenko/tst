@@ -49,6 +49,5 @@ def general_run():
             print("Capcha, OK")
             break
 
-
 general_run()
 browser.close()
