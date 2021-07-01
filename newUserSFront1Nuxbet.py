@@ -12,7 +12,7 @@ import config
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--incognito")
 
-browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, chrome_options=chrome_options)
+browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
 current_date = date.today()
 data = current_date.strftime("%d,%m,%Y")
 
