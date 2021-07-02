@@ -12,6 +12,8 @@ browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
 current_date = date.today()
 data = current_date.strftime("%d,%m,%Y")
 print("check, result")
+main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div/div[1]/div/div/div"
+registration_form_checkpoint = "/html/body/div/div[2]/div/section/div"
 
 def randnum():
     # генерит рандомную строку из четырех цыфр
@@ -35,37 +37,28 @@ def final_checks():
     else:
         print("passwordCon visibility, NotOK")
 
-def open():
-    browser.get(config.SITE)
-    browser.set_window_size(1086, 1020)
+def wait_for_element_by_xpath(xpath):
     try:
         element = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[2]/div/div[1]/div/div/div"))
+            EC.presence_of_element_located((By.XPATH, xpath))
         )
     except:
         print("page open, Error")
         browser.close()
+
+def open():
+    browser.get(config.SITE)
+    browser.set_window_size(1086, 1020)
+    wait_for_element_by_xpath(main_page_checkpoint)
 
 def register_open():
     # открывает форму регистрации
     registration = browser.find_element_by_class_name("regBtn")
     registration.click()
     sleep(1) # без этого слипа работает только в дебаге)
-    try:
-        element = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section/div"))
-        )
-    except:
-        print("registration form open, Error")
-        browser.close()
+    wait_for_element_by_xpath(registration_form_checkpoint)
     browser.refresh()
-    try:
-        element = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section/div"))
-        )
-    except:
-        print("registration form open, Error")
-        browser.close()
+    wait_for_element_by_xpath(registration_form_checkpoint)
 
 def auth_form_check():
     try:
@@ -171,7 +164,6 @@ def registr_valid():
 
     registred_user_check()
     print(f"Username: {user_name}\nUsermail: {user_name}@mail.com")
-
 
 open()
 try:
