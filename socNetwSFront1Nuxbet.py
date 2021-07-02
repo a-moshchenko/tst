@@ -1,4 +1,5 @@
-# Еще не работает!
+# Перед запуском, по возможности, отключить капчу
+print("Перед запуском, по возможности, отключить капчу")
 
 from time import sleep
 import random
@@ -19,7 +20,6 @@ data = current_date.strftime("%d,%m,%Y")
 social_networks_ui_basik_statement = {"facebook":"Off", "google":"Off", "linkedin":"Off", "twitter":"Off", "apple":"Off", "vkontakte":"Off"}
 social_networks_ui_current_statement = {"facebook":"Off", "google":"Off", "linkedin":"Off", "twitter":"Off", "apple":"Off", "vkontakte":"Off"}
 social_networks_admin_basik_statement = {"facebook client_id":"", "facebook client_secret":"", "google client_id":"", "google client_secret":"", "linkedin client_id":"", "linkedin client_secret":"", "twitter client_id":"", "twitter client_secret":"", "apple client_id":"", "apple client_secret":"", "vkontakte client_id":"", "vkontakte client_secret":""}
-
 
 def randnum():
     # генерит рандомную строку из четырех цыфр
@@ -79,8 +79,8 @@ def open_admin_socialite():
     browser.find_element_by_xpath("/html/body/div[1]/aside/section/ul/li[9]/ul/li[7]/a").click()
     sleep(1)
 
-
 def social_networks_statement_check_UI():
+    # тут заполняем social_networks_ui_basik_statement
     open()
     auth_open()
     sleep(2)
@@ -97,7 +97,6 @@ def social_networks_statement_check_UI():
     if str(browser.page_source).find("vk.png") >0:
         social_networks_ui_basik_statement.update({"vkontakte":"On"})
     browser.save_screenshot(str(current_date)+"BasicSocialUISFront1Nuxbet.png")
-    print("SNUIBas: ", social_networks_ui_basik_statement)
     return social_networks_ui_basik_statement
 
 def social_networks_admin_basik_statement_check():
@@ -126,7 +125,6 @@ def social_networks_admin_basik_statement_check():
     social_networks_admin_basik_statement.update({"vkontakte client_secret": str(browser.find_element_by_xpath(
         "/html/body/div/div/section[2]/div/div/div/div[2]/form/div[17]/input").get_attribute("value"))})
     browser.find_element_by_xpath("/html/body/div/header/nav/div/ul/li/a/span").click()
-    print("ADM bas: ", social_networks_admin_basik_statement)
     return social_networks_admin_basik_statement
 
 def social_networks_basik_comparison():
@@ -151,7 +149,9 @@ def social_networks_basik_comparison():
         else: print("basic comparison, OK")
 
 def social_networks_turn_on():
-    social_networks_ui_current_statement = social_networks_ui_basik_statement
+    for i in social_networks_ui_basik_statement:
+        social_networks_ui_current_statement.update({i:social_networks_ui_basik_statement.get(i)})
+
     open_admin_socialite()
     if social_networks_ui_current_statement.get("facebook") == "Off" :
         browser.find_element_by_xpath("/html/body/div/div/section[2]/div/div/div/div[2]/form/div[1]/input").send_keys("TestIDFb")
@@ -200,12 +200,11 @@ def social_networks_turn_on():
     if str(browser.page_source).find("vk.png") >0:
         print("vk on, OK")
     else: print("vk on, NotOK")
-    return social_networks_ui_current_statement
     browser.save_screenshot(str(current_date) + "SocNetwONSFront1Nuxbet.png")
+    return social_networks_ui_current_statement
 
 def social_networks_turn_off():
     open_admin_socialite()
-    print(social_networks_ui_current_statement)
     if social_networks_ui_current_statement.get("facebook") == "On":
         browser.find_element_by_xpath("/html/body/div/div/section[2]/div/div/div/div[2]/form/div[1]/input").send_keys(Keys.CONTROL +"a")
         browser.find_element_by_xpath("/html/body/div/div/section[2]/div/div/div/div[2]/form/div[1]/input").send_keys(
@@ -256,6 +255,7 @@ def social_networks_turn_off():
         social_networks_ui_current_statement.update({"vkontakte": "Off"})
     browser.find_element_by_xpath("/html/body/div/div/section[2]/div/div/div/div[2]/form/button").click()
     sleep(2)
+    browser.find_element_by_xpath("/html/body/div/header/nav/div/ul/li/a/span").click()
     open()
     #auth_open()
     if str(browser.page_source).find("facebook.png") > 0:
@@ -282,6 +282,7 @@ def social_networks_turn_off():
         print("vk off, NotOK")
     else:
         print("vk off, OK")
+    return social_networks_ui_current_statement
     browser.save_screenshot(str(current_date) + "SocNetwOFFSFront1Nuxbet.png")
 
 def social_networks_set_to_default():
@@ -313,7 +314,8 @@ def social_networks_set_to_default():
     browser.find_element_by_xpath("/html/body/div/div/section[2]/div/div/div/div[2]/form/button").click()
     sleep(2)
     open()
-    auth_open()
+    sleep(1)
+    #auth_open()
     sleep(1)
     browser.save_screenshot(str(current_date)+"ToNormalStatementSFront1Nuxbet.png")
 
@@ -322,51 +324,67 @@ def social_networks_log_in():
     #auth_open()
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/div[6]/div/a[1]/img").click()
     sleep(2)
-    if str(browser.current_url) != "https://sfront1.nuxbet.com/":
-        print("fb follow, OK")
-    else: print("fb follow, NotOK")
+    if str(browser.page_source).find("Some problems with captcha")>0:
+        print("fb follow, Capcha")
+    else:
+        if str(browser.current_url) != "https://sfront1.nuxbet.com/":
+            print("fb follow, OK")
+        else: print("fb follow, NotOK")
     sleep(1)
     open()
     #auth_open()
     browser.find_element_by_xpath(
         "/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/div[6]/div/a[2]/img").click()
     sleep(2)
-    if str(browser.current_url) != "https://sfront1.nuxbet.com/":
-        print("google follow, OK")
+    if str(browser.page_source).find("Some problems with captcha")>0:
+        print("google follow, Capcha")
     else:
-        print("google follow, NotOK")
+        if str(browser.current_url) != "https://sfront1.nuxbet.com/":
+            print("google follow, OK")
+        else:
+            print("google follow, NotOK")
     sleep(1)
     open()
     #auth_open()
     browser.find_element_by_xpath(
         "/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/div[6]/div/a[3]/img").click()
     sleep(2)
-    if str(browser.current_url) != "https://sfront1.nuxbet.com/":
-        print("linkedin follow, OK")
+    if str(browser.page_source).find("Some problems with captcha")>0:
+        print("linkedin follow, Capcha")
     else:
-        print("linkedin follow, NotOK")
+        if str(browser.current_url) != "https://sfront1.nuxbet.com/":
+            print("linkedin follow, OK")
+        else:
+            print("linkedin follow, NotOK")
     sleep(1)
     open()
     #auth_open()
     browser.find_element_by_xpath(
         "/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/div[6]/div/a[4]/img").click()
     sleep(2)
-    if str(browser.current_url) != "https://sfront1.nuxbet.com/":
-        print("twitter follow, OK")
+    if str(browser.page_source).find("Some problems with captcha")>0:
+        print("twitter follow, Capcha")
     else:
-        print("twitter follow, NotOK")
+        if str(browser.current_url) != "https://sfront1.nuxbet.com/":
+            print("twitter follow, OK")
+        else:
+            print("twitter follow, NotOK")
     sleep(1)
     open()
     #auth_open()
     browser.find_element_by_xpath(
         "/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/div[6]/div/a[5]/img").click()
     sleep(2)
-    if str(browser.current_url) != "https://sfront1.nuxbet.com/":
-        print("apple follow, OK")
+    if str(browser.page_source).find("Some problems with captcha")>0:
+        print("apple follow, Capcha")
     else:
-        print("apple follow, NotOK")
+        if str(browser.current_url) != "https://sfront1.nuxbet.com/":
+            print("apple follow, OK")
+        else:
+            print("apple follow, NotOK")
     sleep(1)
     open()
+    # разкомментить при запуске в ВПН
     #auth_open()
     #browser.find_element_by_xpath(
     #    "/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/div[6]/div/a[6]/img").click()
@@ -376,11 +394,10 @@ def social_networks_log_in():
     #else:
     #    print("vk follow, NotOK")
 
-
-social_networks_statement_check_UI()
-social_networks_admin_basik_statement_check()
+social_networks_ui_basik_statement = social_networks_statement_check_UI()
+social_networks_admin_basik_statement = social_networks_admin_basik_statement_check()
 social_networks_basik_comparison()
-social_networks_turn_on()
+social_networks_ui_current_statement = social_networks_turn_on()
 social_networks_log_in()
 social_networks_turn_off()
 social_networks_set_to_default()
