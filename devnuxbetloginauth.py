@@ -20,7 +20,7 @@ def randnum():
         random_four_digits += str(random.randint(1, 9))
     return random_four_digits
 
-user_name = "autotestuser" + randnum()
+user_name = f"autotestuser{randnum()}"
 
 def final_checks():
     # Проверяет имя пользователя в форме регистрации
@@ -48,15 +48,15 @@ def open():
 
 def register_open():
     # открывает форму регистрации
-    regi = browser.find_element_by_class_name("regBtn")
-    regi.click()
+    registration = browser.find_element_by_class_name("regBtn")
+    registration.click()
     sleep(1) # без этого слипа работает только в дебаге)
     try:
         element = WebDriverWait(browser, 10).until(
             EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section/div"))
         )
     except:
-        print("registr form open, Error")
+        print("registration form open, Error")
         browser.close()
     browser.refresh()
     try:
@@ -64,7 +64,7 @@ def register_open():
             EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section/div"))
         )
     except:
-        print("registr form open, Error")
+        print("registration form open, Error")
         browser.close()
 
 def auth_form_check():
@@ -81,7 +81,7 @@ def auth_form_check():
         print("authForm, OK")
     except:
         # если формы нет - закрываем окно браузера и выводим ерор
-        print("authForm, NoPopUp")
+        print("authorisation form, NoPopUp")
         browser.close()
 
 def email_input():
@@ -89,7 +89,7 @@ def email_input():
         # Вводим емайл
         email_input_field = browser.find_element_by_xpath("//form/div/div/input")
         email_input_field.click()
-        email_input_field.send_keys(str(user_name + "@mail.com"))
+        email_input_field.send_keys(str(f"{user_name}@mail.com"))
     except:
         print("E-mail input, ERROR")
 
@@ -126,7 +126,7 @@ def password_and_confirmation_input():
     except:
         print("Password input Error")
 
-def refCode_input_and_Check():
+def referal_code_input_and_Check():
     try:
         ref_code_field = browser.find_element_by_xpath("//div/input[3]")
         ref_code_field.send_keys(config.REFCODE)
@@ -148,7 +148,7 @@ def termsAndConditions_confirmation():
 
 def registred_user_check():
     user = browser.find_element_by_xpath("//div[2]/div[3]")
-    if user.text == str(user_name + "@mail.com"):
+    if user.text == str(f"{user_name}@mail.com"):
         print("main page return, OK")
     else:
         print("main page return, NotOK")
@@ -160,18 +160,18 @@ def registr_valid():
     email_input()
     username_input()
     password_and_confirmation_input()
-    refCode_input_and_Check()
+    referal_code_input_and_Check()
     termsAndConditions_confirmation()
     final_checks()
 
     registration_form_button = browser.find_element_by_xpath(
         "/html/body/div/div[2]/div/section/div/form/div/div/div[8]/button")
-    browser.save_screenshot(str(current_date)+"NewUserDewnuxbet.png")
+    browser.save_screenshot(str(f"{current_date}NewUserDewnuxbet.png"))
     registration_form_button.click()
 
     registred_user_check()
-    print("Username: ", user_name)
-    print("Usermail: ", user_name, "@mail.com")
+    print(f"Username: {user_name}")
+    print(f"Usermail: {user_name}@mail.com")
 
 open()
 try:

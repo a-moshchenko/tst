@@ -6,3 +6,4 @@ AUTHNAME = "autotestuser1672@mail.com"
 PASSWORD = "secretZ1"
 AUTH_NAME_EXIST = "autotestuser1672@mail.com" # мейл существующего пользователя
 DEFAULTMAIL = "nuxbetchk@gmail.com"
+SFRONT1SITE = "https://sfront1.nuxbet.com/"

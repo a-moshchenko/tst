@@ -22,7 +22,7 @@ def randnum():
         random_four_digits += str(random.randint(1, 9))
     return random_four_digits
 
-user_name = "autotestuser" + randnum()
+user_name = f"autotestuser{randnum()}"
 
 def auth_open():
     sleep(1)
@@ -79,7 +79,7 @@ def negative_flow_authorization():
         print("no T&C comfirmation warning, OK")
     else:
         print("no T&C confirmation, NotOK")
-    browser.save_screenshot(str(current_date)+"EmptyFieldsSFront1Nuxbet.png")
+    browser.save_screenshot(str(f"{current_date}EmptyFieldsSFront1Nuxbet.png"))
 
     # проверяем без паролей
     open()
