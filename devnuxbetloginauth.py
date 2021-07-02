@@ -170,8 +170,8 @@ def registr_valid():
     registration_form_button.click()
 
     registred_user_check()
-    print(f"Username: {user_name}")
-    print(f"Usermail: {user_name}@mail.com")
+    print(f"Username: {user_name}\nUsermail: {user_name}@mail.com")
+
 
 open()
 try:
