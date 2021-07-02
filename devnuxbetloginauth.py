@@ -40,7 +40,7 @@ def open():
     browser.set_window_size(1086, 1020)
     try:
         element = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[4]/div/div[1]/div/div/div[2]"))
+            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[2]/div/div[1]/div/div/div"))
         )
     except:
         print("page open, Error")
@@ -178,4 +178,4 @@ try:
     registr_valid()
 except:
     print("registration, registration Error")
-#browser.close()
+browser.close()
