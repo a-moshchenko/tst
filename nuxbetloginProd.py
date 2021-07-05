@@ -1,26 +1,32 @@
 from time import sleep
 from datetime import date
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
+from pathlib import Path
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import config
 
-browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
+browser = webdriver.Chrome(executable_path=Path.cwd()/"driwers"/"chromedriver.exe")
 current_date = date.today()
 data = current_date.strftime("%d,%m,%Y")
+screenshot_path = Path.cwd()/"screenshots"/data
+main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
+logout_dropdown_menu = "/html/body/div/div[2]/div/section[4]/header"
+def wait_for_element(xpath):
+    try:
+        WebDriverWait(browser, 10).until(
+            EC.presence_of_element_located((By.XPATH, xpath))
+        )
+    except Exception:
+        print(f"page open, Error, {Exception}")
+        browser.close()
 
 def open():
     browser.get("https://nuxbet.com/")
     browser.set_window_size(1086, 1020)
-    try:
-        element = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[2]/div"))
-        )
-    except:
-        print("page open, Error")
-        browser.close()
+    wait_for_element(main_page_checkpoint)
+
 
 def password_vizibility_check():
     # Проверяем отображение пароля при нажатии на глаз
@@ -33,9 +39,8 @@ def password_vizibility_check():
             print("password vizible, OK")
         else:
             print("password vizible, NotOK")
-    except:
-        print("password vizible, Error")
-        print(password_vizible)
+    except Exception:
+        print(f"password vizible, Error, {Exception}\n password: {password_vizible}")
 
 def login_positiv_flow():
     open()
@@ -44,8 +49,8 @@ def login_positiv_flow():
     try:
         browser.find_element_by_css_selector(".formHeader")
         print("auth form, OK")
-    except:
-        print("auth form, NotOK")
+    except Exception:
+        print(f"auth form, NotOK, {Exception}")
     logmail = browser.find_element_by_xpath("//input[@type='text']")
     logmail.send_keys(config.AUTH_NAME_EXIST)
     passwd = browser.find_element_by_xpath("//input[@type='password']")
@@ -63,25 +68,19 @@ def login_positiv_flow():
             print("main page return, OK")
         else:
             print("NOK, uname: ", uname.text)
-    except:
-        print("auth, NotOK")
+    except Exception:
+        print(f"auth, NotOK, {Exception}")
     log_out()
 
 def log_out():
-    try:
-        element = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[4]/header"))
-        )
-    except:
-        print("page open, Error")
-        browser.close()
+    wait_for_element(logout_dropdown_menu)
     print("page loaded")
     try:
         browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/span[2]").click()
         sleep(1)
         browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/div[2]/a[7]").click()
-    except:
-        print("loged out")
+    except Exception:
+        print(f"loged out, {Exception}")
 
 def login_negative_flow():
     open()
@@ -89,15 +88,14 @@ def login_negative_flow():
     try:
         browser.find_element_by_css_selector(".formHeader")
         print("auth form, OK")
-    except:
-        print("auth form, NotOK")
+    except Exception:
+        print(f"auth form, NotOK, {Exception}")
     logmail = browser.find_element_by_xpath("//input[@type='text']") # проверка почты без собаки и незаполненный пароль
     logmail.send_keys("noatmail")
     logbtn = browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div[2]/button")
     logbtn.click()
     sleep(1) # слип нужен чтоб форма обновилась
     if str(logmail.get_attribute("class")) == "inputError":
-
         print("mail !@, OK")
     else: print("mail !@, NotOK")
     if str(browser.find_element_by_xpath("//input[@type='password']").get_attribute("class")) == "inputError":

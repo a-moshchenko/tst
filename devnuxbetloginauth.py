@@ -1,6 +1,7 @@
 from time import sleep
 import random
 from datetime import date
+from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -8,9 +9,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import config
 
-browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
+browser = webdriver.Chrome(executable_path=Path.cwd()/"driwers"/"chromedriver.exe")
 current_date = date.today()
 data = current_date.strftime("%d,%m,%Y")
+screenshot_path = Path.cwd()/"screenshots"/data
 print("check, result")
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div/div[1]/div/div/div"
 registration_form_checkpoint = "/html/body/div/div[2]/div/section/div"
@@ -40,7 +42,7 @@ def final_checks():
 
 def wait_for_element_by_xpath(xpath):
     try:
-        element = WebDriverWait(browser, 10).until(
+        WebDriverWait(browser, 10).until(
             EC.presence_of_element_located((By.XPATH, xpath))
         )
     except Exception:
@@ -67,9 +69,9 @@ def auth_form_check():
         wait_for_element_by_xpath(authorisation_form_checkpoint)
         browser.find_element_by_class_name("authForm")
         print("authForm, OK")
-    except:
+    except Exception:
         # если формы нет - закрываем окно браузера и выводим ерор
-        print("authorisation form, NoPopUp")
+        print(f"authorisation form, NoPopUp, {Exception}")
         browser.close()
 
 def email_input():
@@ -78,8 +80,8 @@ def email_input():
         email_input_field = browser.find_element_by_xpath("//form/div/div/input")
         email_input_field.click()
         email_input_field.send_keys(str(f"{user_name}@mail.com"))
-    except:
-        print("E-mail input, ERROR")
+    except Exception:
+        print(f"E-mail input, ERROR, {Exception}")
 
 def username_input():
     try:
@@ -87,8 +89,8 @@ def username_input():
         username_field = browser.find_element_by_xpath("//input[2]")
         username_field.click()
         username_field.send_keys(user_name)
-    except:
-        print("login input, ERROR")
+    except Exception:
+        print(f"login input, ERROR, {Exception}")
 
 def password_visibility_check():
     try:
@@ -97,8 +99,8 @@ def password_visibility_check():
         password_field.click()
         password_confirm_field = browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div/div/div[6]/div")
         password_confirm_field.click()
-    except:
-        print("Visible password ERROR")
+    except Exception:
+        print(f"Visible password ERROR, {Exception}")
 
 def password_and_confirmation_input():
     try:
@@ -111,8 +113,8 @@ def password_and_confirmation_input():
         password_confirm_field.click()
         password_confirm_field.send_keys(config.PASSWD)
         password_visibility_check()
-    except:
-        print("Password input Error")
+    except Exception:
+        print(f"Password input Error, {Exception}")
 
 def referal_code_input_and_Check():
     try:
@@ -121,18 +123,18 @@ def referal_code_input_and_Check():
         if ref_code_field.get_attribute("value") == config.REFCODE:
             print("ref code, OK")
         else:
-            print("refCode: ", ref_code_field.get_attribute("value"))
-    except:
-        print("ref code, NotOK")
+            print(f"refCode: {ref_code_field.get_attribute('value')}")
+    except Exception:
+        print(f"ref code, NotOK, {Exception}")
 
-def termsAndConditions_confirmation():
+def terms_and_conditions_confirmation():
     try:
         # Соглашаемся с T&C
         terms_checkbox = browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div/div/input[4]")
         browser.execute_script("arguments[0].click();", terms_checkbox)
         print("T&C acepted, OK")
-    except:
-        print("T&C ERROR")
+    except Exception:
+        print(f"T&C ERROR, {Exception}")
 
 def registred_user_check():
     user = browser.find_element_by_xpath("//div[2]/div[3]")
@@ -149,14 +151,12 @@ def registr_valid():
     username_input()
     password_and_confirmation_input()
     referal_code_input_and_Check()
-    termsAndConditions_confirmation()
+    terms_and_conditions_confirmation()
     final_checks()
-
     registration_form_button = browser.find_element_by_xpath(
         "/html/body/div/div[2]/div/section/div/form/div/div/div[8]/button")
-    browser.save_screenshot(str(f"{current_date}NewUserDewnuxbet.png"))
+    browser.save_screenshot(str(f"{screenshot_path}NewUserDewnuxbet.png"))
     registration_form_button.click()
-
     registred_user_check()
     print(f"Username: {user_name}\nUsermail: {user_name}@mail.com")
 

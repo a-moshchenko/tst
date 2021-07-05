@@ -1,6 +1,7 @@
 from time import sleep
 import random
 from datetime import date
+from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -8,9 +9,13 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import config
 
-browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
+browser = webdriver.Chrome(executable_path=Path.cwd()/"driwers"/"chromedriver.exe")
 current_date = date.today()
 data = current_date.strftime("%d,%m,%Y")
+screenshot_path = Path.cwd()/"screenshots"/data
+main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
+registration_form_checkpoint = "/html/body/div/div[2]/div/section/div"
+authorisation_form_checkpoint = "/html/body/div/div[2]/div/section/div"
 print("check, result")
 
 def randnum():
@@ -21,6 +26,15 @@ def randnum():
     return random_four_digits
 
 user_name = "autotestuser" + randnum()
+
+def wait_for_element(xpath):
+    try:
+        WebDriverWait(browser, 10).until(
+            EC.presence_of_element_located((By.XPATH, xpath))
+        )
+    except Exception:
+        print(f"page open, Error, {Exception}")
+        browser.close()
 
 def final_checks():
     # Проверяет имя пользователя в форме регистрации
@@ -38,45 +52,21 @@ def final_checks():
 def open():
     browser.get("https://nuxbet.com/")
     browser.set_window_size(1086, 1020)
-    try:
-        element = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[2]/div"))
-        )
-    except:
-        print("page open, Error")
-        browser.close()
+    wait_for_element(main_page_checkpoint)
 
 def register_open():
     # открывает форму регистрации
     regi = browser.find_element_by_class_name("regBtn")
     regi.click()
     sleep(1) # без этого слипа работает только в дебаге)
-    try:
-        element = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section/div"))
-        )
-    except:
-        print("registr form open, Error")
-        browser.close()
+    wait_for_element(registration_form_checkpoint)
     browser.refresh()
-    try:
-        element = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section/div"))
-        )
-    except:
-        print("registr form open, Error")
-        browser.close()
+    wait_for_element(registration_form_checkpoint)
 
 def auth_form_check():
     try:
         # Проверяем наличие формы авторизации
-        try:
-            element = WebDriverWait(browser, 10).until(
-                EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section/div"))
-            )
-        except:
-            print("authorization form, Error")
-            browser.close()
+        wait_for_element(authorisation_form_checkpoint)
         browser.find_element_by_class_name("authForm")
         print("authForm, OK")
     except:
@@ -90,8 +80,8 @@ def email_input():
         email_input_field = browser.find_element_by_xpath("//form/div/div/input")
         email_input_field.click()
         email_input_field.send_keys(str(user_name + "@mail.com"))
-    except:
-        print("E-mail input, ERROR")
+    except Exception:
+        print(f"E-mail input, ERROR, {Exception}")
 
 def username_input():
     try:
@@ -99,8 +89,8 @@ def username_input():
         username_field = browser.find_element_by_xpath("//input[2]")
         username_field.click()
         username_field.send_keys(user_name)
-    except:
-        print("login input, ERROR")
+    except Exception:
+        print(f"login input, ERROR, {Exception}")
 
 def password_visibility_check():
     try:
@@ -109,8 +99,8 @@ def password_visibility_check():
         password_field.click()
         password_confirm_field = browser.find_element_by_css_selector(".passWrap:nth-child(6) > .showPass")
         password_confirm_field.click()
-    except:
-        print("Visible password ERROR")
+    except Exception:
+        print(f"Visible password ERROR, {Exception}")
 
 def password_and_confirmation_input():
     try:
@@ -123,10 +113,10 @@ def password_and_confirmation_input():
         password_confirm_field.click()
         password_confirm_field.send_keys(config.PASSWD)
         password_visibility_check()
-    except:
-        print("Password input Error")
+    except Exception:
+        print(f"Password input Error, {Exception}")
 
-def refCode_input_and_Check():
+def referal_code_input_and_Check():
     try:
         ref_code_field = browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/input[2]")
         ref_code_field.send_keys(config.REFCODE)
@@ -134,17 +124,17 @@ def refCode_input_and_Check():
             print("ref code, OK")
         else:
             print("refCode: ", ref_code_field.get_attribute("value"))
-    except:
-        print("ref code, NotOK")
+    except Exception:
+        print(f"ref code, NotOK, {Exception}")
 
-def termsAndConditions_confirmation():
+def terms_and_conditions_confirmation():
     try:
         # Соглашаемся с T&C
         terms_checkbox = browser.find_element_by_css_selector("label:nth-child(10)")
         browser.execute_script("arguments[0].click();", terms_checkbox)
         print("T&C acepted, OK")
-    except:
-        print("T&C ERROR")
+    except Exception:
+        print(f"T&C ERROR, {Exception}")
 
 def registred_user_check():
     user = browser.find_element_by_xpath("//div[2]/div[3]")
@@ -160,22 +150,21 @@ def registr_valid():
     email_input()
     #username_input()
     password_and_confirmation_input()
-    refCode_input_and_Check()
-    termsAndConditions_confirmation()
+    referal_code_input_and_Check()
+    terms_and_conditions_confirmation()
     final_checks()
 
     registration_form_button = browser.find_element_by_xpath(
         "/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/div[7]/button")
-    browser.save_screenshot(str(data) + "RegistrationNuxbet.png")
+    browser.save_screenshot(str(f"{screenshot_path}RegistrationNuxbet.png"))
     #registration_form_button.click()
 
     registred_user_check()
-    print("Username: ", user_name)
-    print("Usermail: ", user_name, "@mail.com")
+    print(f"Username: {user_name}\nUsermail: {user_name}@mail.com")
 
 open()
 try:
     registr_valid()
-except:
-    print("registration, registration Error")
+except Exception:
+    print(f"registration, registration Error, {Exception}")
 browser.close()
