@@ -1,7 +1,7 @@
-from datetime import date
 from time import sleep
 import random
 from datetime import date
+from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -10,10 +10,12 @@ import config
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--incognito")
-
-browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
+browser = webdriver.Chrome(executable_path=Path.cwd()/"driwers"/"chromedriver.exe", options=chrome_options)
 current_date = date.today()
 data = current_date.strftime("%d,%m,%Y")
+screenshot_path = Path.cwd()/"screenshots"/data
+authorisation_form_checkpoint = "/html/body/div/div[1]/div[2]/div/div/div/div"
+main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 
 def randnum():
     # генерит рандомную строку из четырех цыфр
@@ -24,35 +26,26 @@ def randnum():
 
 user_name = f"autotestuser{randnum()}"
 
+def wait_for_element(xpath):
+    try:
+        WebDriverWait(browser, 10).until(
+            EC.presence_of_element_located((By.XPATH, xpath))
+        )
+    except Exception:
+        print(f"registr form open, Error, {Exception}")
+        browser.close()
+
 def auth_open():
     sleep(1)
     browser.find_element_by_css_selector(".regBtn").click()
-    try:
-        element = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[1]/div[2]/div/div/div/div"))
-        )
-    except:
-        print("registr form open, Error")
-        browser.close()
+    wait_for_element(authorisation_form_checkpoint)
     browser.refresh()
-    try:
-        element = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[1]/div[2]/div/div/div/div"))
-        )
-    except:
-        print("registr form open, Error")
-        browser.close()
+    wait_for_element(authorisation_form_checkpoint)
 
 def open():
     browser.get("https://sfront1.nuxbet.com/")
     browser.set_window_size(1086, 1020)
-    try:
-        element = WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[2]/div"))
-        )
-    except:
-        print("page open, Error")
-        browser.close()
+    wait_for_element(main_page_checkpoint)
     browser.refresh()
 
 def negative_flow_authorization():
@@ -79,7 +72,7 @@ def negative_flow_authorization():
         print("no T&C comfirmation warning, OK")
     else:
         print("no T&C confirmation, NotOK")
-    browser.save_screenshot(str(f"{current_date}EmptyFieldsSFront1Nuxbet.png"))
+    browser.save_screenshot(str(f"{screenshot_path}EmptyFieldsSFront1Nuxbet.png"))
 
     # проверяем без паролей
     open()
@@ -106,11 +99,11 @@ def negative_flow_authorization():
         print("no T&C comfirmation warning, OK")
     else:
         print("no T&C confirmation, NotOK")
-    if str(browser.page_source).find("shortText.field_required") >0  or str(browser.page_source).find("This field is required") >0:
+    if str(browser.page_source).find("shortText.field_required") > 0 or str(browser.page_source).find("This field is required") > 0:
         print("required field message, OK")
     else:
         print("required field message, NotOK")
-    browser.save_screenshot(str(current_date)+"EmptyPasswordsSFront1Nuxbet.png")
+    browser.save_screenshot(str(f"{screenshot_path}EmptyPasswordsSFront1Nuxbet.png"))
 
     # проверяем с неправильным подтверждением пароля
     open()
@@ -124,7 +117,7 @@ def negative_flow_authorization():
         print("wrong password comfirmation warning, OK")
     else:
         print("wrong password confirmation, NotOK")
-    browser.save_screenshot(str(current_date) + "WrongPasswordConfirmationSFront1Nuxbet.png")
+    browser.save_screenshot(str(f"{screenshot_path}WrongPasswordConfirmationSFront1Nuxbet.png"))
 
     # проверяем с нечекнутым T&C боксом
     open()
@@ -146,7 +139,7 @@ def negative_flow_authorization():
         print("cyrylik username warning, OK")
     else:
         print("cyrylik username warning, NotOK")
-    browser.save_screenshot(str(current_date) + "CyrylikUsernameSFront1Nuxbet.png")
+    browser.save_screenshot(str(f"{screenshot_path}CyrylikUsernameSFront1Nuxbet.png"))
 
     # проверяем ранее зарегистрированный юзернейм
     open()
@@ -157,15 +150,15 @@ def negative_flow_authorization():
     try:
         terms_checkbox = browser.find_element_by_xpath("//form/div/div/label")
         browser.execute_script("arguments[0].click();", terms_checkbox)
-    except:
-        print("T&C Error")
+    except Exception:
+        print(f"T&C Error, {Exception}")
     browser.find_element_by_xpath("//div[6]/button").click()
-    sleep(1) # нужно чтоб форма обновилась
+    sleep(1)  # нужно чтоб форма обновилась
     if str(browser.page_source).find("Username/Email already exist") >0:
         print("EsistingUser warning, OK")
     else:
         print("EsistingUser warning, NotOK")
-    browser.save_screenshot(str(current_date)+"ExistingUsernameSFront1Nuxbet.png")
+    browser.save_screenshot(str(f"{screenshot_path}ExistingUsernameSFront1Nuxbet.png"))
 
 open()
 negative_flow_authorization()
