@@ -9,6 +9,16 @@ import config
 browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
 current_date = date.today()
 data = current_date.strftime("%d,%m,%Y")
+main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
+
+def wait_for_element(xpath):
+    try:
+        element = WebDriverWait(browser, 10).until(
+            EC.presence_of_element_located((By.XPATH, xpath))
+        )
+    except:
+        print("page open, Error")
+        browser.close()
 
 def open():
     browser.get(config.SITE)

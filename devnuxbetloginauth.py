@@ -14,6 +14,7 @@ data = current_date.strftime("%d,%m,%Y")
 print("check, result")
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div/div[1]/div/div/div"
 registration_form_checkpoint = "/html/body/div/div[2]/div/section/div"
+authorisation_form_checkpoint = "/html/body/div/div[2]/div/section/div"
 
 def randnum():
     # генерит рандомную строку из четырех цыфр
@@ -42,8 +43,8 @@ def wait_for_element_by_xpath(xpath):
         element = WebDriverWait(browser, 10).until(
             EC.presence_of_element_located((By.XPATH, xpath))
         )
-    except:
-        print("page open, Error")
+    except Exception:
+        print(f"page open, Error, {Exception}")
         browser.close()
 
 def open():
@@ -63,13 +64,7 @@ def register_open():
 def auth_form_check():
     try:
         # Проверяем наличие формы авторизации
-        try:
-            element = WebDriverWait(browser, 10).until(
-                EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section/div"))
-            )
-        except:
-            print("authorization form, Error")
-            browser.close()
+        wait_for_element_by_xpath(authorisation_form_checkpoint)
         browser.find_element_by_class_name("authForm")
         print("authForm, OK")
     except:
@@ -168,6 +163,6 @@ def registr_valid():
 open()
 try:
     registr_valid()
-except:
-    print("registration, registration Error")
+except Exception:
+    print(f"registration, registration Error, {Exception}")
 browser.close()
