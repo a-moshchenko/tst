@@ -276,4 +276,4 @@ def login_via_google():
 open()
 login_via_mail()
 login_negative_flow()
-#browser.close()
+browser.close()
