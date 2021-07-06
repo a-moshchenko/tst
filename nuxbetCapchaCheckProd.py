@@ -4,37 +4,38 @@ from datetime import date
 from pathlib import Path
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions
 import config
 
 browser = webdriver.Chrome(executable_path=Path.cwd()/"driwers"/"chromedriver.exe")
 current_date = date.today()
-data = current_date.strftime("%d,%m,%Y")
-screenshot_path = Path.cwd()/"screenshots"/data
+date = current_date.strftime("%d,%m,%Y")
+screenshot_path = Path.cwd()/"screenshots"/date
+
 
 def open():
     browser.get("https://nuxbet.com/")
     browser.set_window_size(1086, 1020)
     try:
         WebDriverWait(browser, 10).until(
-            EC.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[2]/div"))
+            expected_conditions.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[2]/div"))
         )
-    except:
-        print("page open, Error")
+    except Exception as e:
+        print(f"page open, Error, {e}")
         browser.close()
 
-def login_opn():
+
+def login_form_open():
     login_btn_main = browser.find_element_by_class_name("regBtn")
     login_btn_main.click()
 
+
 def general_run():
     open()
-    login_opn()
+    login_form_open()
     sleep(1)
     browser.find_element_by_xpath("//input[@type='text']").send_keys(
         config.AUTHNAME)  # вводим мейл пользователя
-    #browser.find_element_by_xpath("(//input[@type='text'])[2]").send_keys(
-    #    "LoremIpsum")  # вводим имя пользователя
     browser.find_element_by_xpath("//input[@type='password']").send_keys(
         config.PASSWORD)  # вводим пароль
     browser.find_element_by_xpath("(//input[@type='password'])[2]").send_keys(
@@ -52,6 +53,7 @@ def general_run():
             browser.save_screenshot(str(f"{screenshot_path}CapchaNuxbet.png"))
             print("Capcha, OK")
             break
+
 
 general_run()
 browser.close()
