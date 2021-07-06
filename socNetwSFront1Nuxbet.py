@@ -223,9 +223,14 @@ def gmail_login():
     browser.find_element_by_xpath("/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[1]/div[1]/div/div/div/div/div[1]/div/div[1]/input").send_keys("secretZ1")
     browser.find_element_by_xpath("/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button/span").click()
     open()
-    # auth_open()
+    sleep(1)
+    try:
+        browser.find_element_by_class_name("formWrap authForm")
+    except: # тут ексепшн используется как логическое ветвление, поэтому не описан
+        authorisation_form_open()
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/div[6]/div/a[2]/img"
                                   ).click()
+    sleep(2)
     if str(browser.current_url) != "https://sfront1.nuxbet.com/":
         if str(browser.page_source).find("nuxbetchk@gmail.com") > 0:
             browser.find_element_by_xpath("//div/ul/li[1]/div").click()
@@ -233,18 +238,20 @@ def gmail_login():
             browser.find_element_by_xpath("/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button/span").click()
             sleep(1)
         else:
-            sleep(1)
+            sleep(2)
             browser.find_element_by_xpath(
                 "/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[1]/div/div[1]/div/div[1]/input").send_keys(
                 "nuxbetchk@gmail.com")
             browser.find_element_by_xpath(
-                "/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button/span").click()
-    sleep(1)
+                "/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[1]/div/div[1]/div/div[1]/input").send_keys(Keys.ENTER)
+            sleep(1)  # нужно чтоб форма гугла обновилась
+            browser.find_element_by_xpath("//*[@id='password']/div[1]/div/div[1]/input").send_keys("secretZ1")
+            sleep(1)
+            browser.find_element_by_xpath("//*[@id='password']/div[1]/div/div[1]/input").send_keys(Keys.ENTER)
+    wait_for_element(main_page_checkpoint)
+    sleep(3)
     if str(browser.page_source).find("109693494692241829544") > 0:
         print("google login, OK")
-        browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[4]/div[3]").click()
-        sleep(1)
-        browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[4]/div[3]/div[2]/a[7]").click()
     else:
         print("google login, NotOK")
 
