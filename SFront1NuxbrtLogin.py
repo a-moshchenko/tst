@@ -257,11 +257,11 @@ def ticket_create():
 
 def login_via_google():
     browser.find_element_by_xpath("//img[@alt='google']").click()
-    sleep(2)
+    wait_for_element("//input[@id='identifierId']")
     browser.find_element_by_xpath(
                 "//input[@id='identifierId']").send_keys(config.DEFAULTMAIL)
     browser.find_element_by_xpath("//input[@id='identifierId']").send_keys(Keys.ENTER)
-    sleep(1)  # нужно чтоб форма гугла обновилась
+    wait_for_element("//*[@id='password']/div[1]/div/div[1]/input")
     browser.find_element_by_xpath("//*[@id='password']/div[1]/div/div[1]/input").send_keys(config.PASSWORD)
     sleep(1)
     browser.find_element_by_xpath("//*[@id='password']/div[1]/div/div[1]/input").send_keys(Keys.ENTER)
