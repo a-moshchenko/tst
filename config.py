@@ -8,3 +8,4 @@ AUTH_NAME_EXIST = "autotestuser1672@mail.com" # мейл существующе�
 DEFAULTMAIL = "nuxbetchk@gmail.com"
 SFRONT1SITE = "https://sfront1.nuxbet.com/"
 AUTHSHORTNAME = "autotestuser1672"
+SFRONT3SITE = "https://sfront3.nuxbet.com/"
