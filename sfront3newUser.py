@@ -20,6 +20,7 @@ screenshot_path = Path.cwd()/"screenshots"/date
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 registration_form_checkpoint = "/html/body/div/div[1]/div[2]/div/div/div/div"
 
+
 def random_four_digits_number():
     # генерит рандомную строку из четырех цыфр
     random_four_digits = ""
@@ -129,9 +130,9 @@ def fill_all_fields():
     browser.find_element_by_xpath("//input[@type='tel']").send_keys(f"321{random_four_digits_number()}")
     browser.find_element_by_xpath("(//input[@type='search'])[7]").send_keys("GBP")
     browser.find_element_by_xpath("(//input[@type='search'])[7]").send_keys(Keys.ENTER)
-    #browser.find_element_by_xpath("(//input[@type='search'])[7]").click()
-    #browser.find_element_by_xpath("//ul[@id='vs12__listbox']/li[4]").click()
-    #browser.find_element_by_xpath("(//input[@type='search'])[7]").send_keys(Keys.ENTER)
+    # browser.find_element_by_xpath("(//input[@type='search'])[7]").click()
+    # browser.find_element_by_xpath("//ul[@id='vs12__listbox']/li[4]").click()
+    # browser.find_element_by_xpath("(//input[@type='search'])[7]").send_keys(Keys.ENTER)
     browser.find_element_by_xpath("(//input[@type='text'])[7]").send_keys(f"{username}Login")
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
     browser.find_element_by_xpath("//div[2]/div[3]/div").click()
@@ -140,13 +141,15 @@ def fill_all_fields():
     else:
         print("password visibility, NotOK")
     sleep(1)
-    browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div[2]/div[5]/input").send_keys(config.PASSWORD)
+    browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div[2]/div[5]/input")\
+        .send_keys(config.PASSWORD)
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div[2]/div[5]/div").click()
     if str(browser.find_element_by_xpath("(//input[@type='text'])[9]").get_attribute("value")) == str(config.PASSWORD):
         print("password confirmation visibility, OK")
     else:
         print("password confirmation visibility, NotOK")
-    browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div[2]/input[2]").send_keys(config.REFCODE)
+    browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div[2]/input[2]")\
+        .send_keys(config.REFCODE)
     terms_checkbox = browser.find_element_by_xpath("//div[2]/label")
     browser.execute_script("arguments[0].click();", terms_checkbox)
     browser.save_screenshot(f"{screenshot_path}RegistrationFormFilledSFront3Nuxbet.png")
@@ -221,6 +224,7 @@ def log_out():
     browser.find_element_by_xpath("//a[contains(@href, '#')]").click()
     browser.refresh()
     wait_for_element("/html/body/div/div[2]/div/section[2]/div")
+
 
 def login_via_google():
     open_registration_form()
