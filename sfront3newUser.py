@@ -101,7 +101,8 @@ def empty_fields_check():
 
 
 def fill_all_fields():
-    browser.find_element_by_xpath("(//input[@type='text'])").send_keys("Username")
+    username = f"autotestuser{random_four_digits_number()}"
+    browser.find_element_by_xpath("(//input[@type='text'])").send_keys(username)
     browser.find_element_by_xpath("(//input[@type='text'])[2]").send_keys("userSecondName")
     birth_date = browser.find_element_by_xpath("//input[@name='date']")
     birth_date.click()
@@ -117,21 +118,21 @@ def fill_all_fields():
     move_calendar_left.click()
     move_calendar_left.click()
     browser.find_element_by_xpath("//tr[3]/td[3]").click()
-    browser.find_element_by_xpath("(//input[@type='text'])[4]").send_keys(
-        f"autotestuser{random_four_digits_number()}@mail.com")
+    browser.find_element_by_xpath("(//input[@type='text'])[4]").send_keys(f"{username}@mail.com")
     browser.find_element_by_xpath("(//input[@type='search'])[5]").click()
     wait_for_element("//ul[@id='vs5__listbox']")
-    browser.find_element_by_xpath("//li[@id='vs5__option-5']").click()
+    browser.find_element_by_xpath("//li[@id='vs5__option-6']").click()
     browser.find_element_by_xpath("(//input[@type='text'])[5]").send_keys("Buchenvald")
     browser.find_element_by_xpath("(//input[@type='text'])[6]").send_keys("Palace")
     browser.find_element_by_xpath("(//input[@type='search'])[6]").send_keys("13")
     browser.find_element_by_xpath("(//input[@type='search'])[6]").send_keys(Keys.ENTER)
+    browser.find_element_by_xpath("//input[@type='tel']").send_keys(f"321{random_four_digits_number()}")
     browser.find_element_by_xpath("(//input[@type='search'])[7]").send_keys("GBP")
     browser.find_element_by_xpath("(//input[@type='search'])[7]").send_keys(Keys.ENTER)
     #browser.find_element_by_xpath("(//input[@type='search'])[7]").click()
     #browser.find_element_by_xpath("//ul[@id='vs12__listbox']/li[4]").click()
     #browser.find_element_by_xpath("(//input[@type='search'])[7]").send_keys(Keys.ENTER)
-    browser.find_element_by_xpath("(//input[@type='text'])[7]").send_keys("UserLogin")
+    browser.find_element_by_xpath("(//input[@type='text'])[7]").send_keys(f"{username}Login")
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
     browser.find_element_by_xpath("//div[2]/div[3]/div").click()
     if str(browser.find_element_by_xpath("(//input[@type='text'])[8]").get_attribute("value")) == str(config.PASSWORD):
@@ -189,12 +190,19 @@ def invalid_email_check():
         print("no et email warning, OK")
     else:
         print("no et email warning, NotOK")
-    browser.save_screenshot(f"{screenshot_path}CyrylicEmailSFront3Nuxbet.png")
+    browser.save_screenshot(f"{screenshot_path}NoEtEmailSFront3Nuxbet.png")
     browser.refresh()
 
     # проверяем неверное подтверждение пароля
     fill_all_fields()
-
+    browser.find_element_by_xpath("(//input[@type='text'])[8]").send_keys(Keys.BACKSPACE)
+    browser.save_screenshot(f"{screenshot_path}IncorrectPasswordConfirmationSFront3Nuxbet.png")
+    if str(browser.find_element_by_xpath("(//input[@type='text'])[9]").get_attribute("class")) == "inputError":
+        print("wrong password confirmation field warning, OK")
+    else:
+        print("wrong password confirmation field warning, NotOK")
+    browser.save_screenshot(f"{screenshot_path}PasswordConfirmationWarningSFront3Nuxbet.png")
+    browser.refresh()
 
 
 def registration_negative_flow():
@@ -207,7 +215,57 @@ def registration_negative_flow():
     invalid_email_check()
 
 
+def log_out():
+    browser.find_element_by_css_selector(".userName").click()
+    wait_for_element("//a[contains(@href, '#')]")
+    browser.find_element_by_xpath("//a[contains(@href, '#')]").click()
+    browser.refresh()
+    wait_for_element("/html/body/div/div[2]/div/section[2]/div")
+
+def login_via_google():
+    open_registration_form()
+    browser.find_element_by_xpath("//img[@alt='google']").click()
+    wait_for_element("//input[@id='identifierId']")
+    browser.find_element_by_xpath(
+        "//input[@id='identifierId']").send_keys(config.DEFAULTMAIL)
+    browser.find_element_by_xpath("//input[@id='identifierId']").send_keys(Keys.ENTER)
+    sleep(1)
+    wait_for_element("//*[@id='password']/div[1]/div/div[1]/input")
+    browser.find_element_by_xpath("//*[@id='password']/div[1]/div/div[1]/input").send_keys(config.PASSWORD)
+    sleep(1)
+    browser.find_element_by_xpath("//*[@id='password']/div[1]/div/div[1]/input").send_keys(Keys.ENTER)
+    wait_for_element(main_page_checkpoint)
+    sleep(3)
+    browser.save_screenshot(f"{screenshot_path}RegistratedViaGoogleSFront3Nuxbet.png")
+    if str(browser.page_source).find("nuxbetchk") > 0:
+        print("google login, OK")
+    else:
+        print("google login, NotOK")
+
+
+def registration_positive_flow():
+    fill_all_fields()
+    username = str(browser.find_element_by_xpath("(//input[@type='text'])[4]").get_attribute("value"))[:-9]
+    print(f"""Username: {username}\nPassword: {config.PASSWORD}\nPhone: {browser.find_element_by_xpath(
+        "//input[@type='tel']").get_attribute("value")}""")
+    browser.find_element_by_xpath("//button[@class='mainBtn']").click()
+    wait_for_element("/html/body/div/div[2]/div/section[2]/div")
+    sleep(2)
+    if str(browser.current_url) == str(config.SFRONT3SITE):
+        print("to main page after registration, OK")
+    else:
+        print("to main page after registration, NotOK")
+    if str(browser.page_source).find(username) > 0:
+        print("user registered, OK")
+    else:
+        print("user registered, NotOK")
+    browser.save_screenshot(f"{screenshot_path}RegistrationFinishedSFront3Nuxbet.png")
+    log_out()
+    login_via_google()
+
+
 open_main_page()
 open_registration_form()
 to_login_form_and_back()
 registration_negative_flow()
+registration_positive_flow()
