@@ -19,6 +19,7 @@ date = current_date.strftime("%d,%m,%Y")
 screenshot_path = Path.cwd()/"screenshots"/date
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 registration_form_checkpoint = "/html/body/div/div[1]/div[2]/div/div/div/div"
+user_registration_info = {}
 
 
 def random_four_digits_number():
@@ -141,14 +142,14 @@ def fill_all_fields():
     else:
         print("password visibility, NotOK")
     sleep(1)
-    browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div[2]/div[5]/input")\
+    browser.find_element_by_xpath("//input[@type='password']")\
         .send_keys(config.PASSWORD)
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div[2]/div[5]/div").click()
     if str(browser.find_element_by_xpath("(//input[@type='text'])[9]").get_attribute("value")) == str(config.PASSWORD):
         print("password confirmation visibility, OK")
     else:
         print("password confirmation visibility, NotOK")
-    browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div[2]/input[2]")\
+    browser.find_element_by_xpath("(//input[@type='text'])[10]")\
         .send_keys(config.REFCODE)
     terms_checkbox = browser.find_element_by_xpath("//div[2]/label")
     browser.execute_script("arguments[0].click();", terms_checkbox)
@@ -221,6 +222,7 @@ def registration_negative_flow():
 def log_out():
     browser.find_element_by_css_selector(".userName").click()
     wait_for_element("//a[contains(@href, '#')]")
+    sleep(1)
     browser.find_element_by_xpath("//a[contains(@href, '#')]").click()
     browser.refresh()
     wait_for_element("/html/body/div/div[2]/div/section[2]/div")
@@ -252,6 +254,8 @@ def registration_positive_flow():
     username = str(browser.find_element_by_xpath("(//input[@type='text'])[4]").get_attribute("value"))[:-9]
     print(f"""Username: {username}\nPassword: {config.PASSWORD}\nPhone: {browser.find_element_by_xpath(
         "//input[@type='tel']").get_attribute("value")}""")
+    global user_registration_info
+    user_registration_data(user_registration_info)
     browser.find_element_by_xpath("//button[@class='mainBtn']").click()
     wait_for_element("/html/body/div/div[2]/div/section[2]/div")
     sleep(2)
@@ -268,9 +272,91 @@ def registration_positive_flow():
     login_via_google()
 
 
+def user_registration_data(user_data):
+    user_data.update({"name": str(browser.find_element_by_xpath("(//input[@type='text'])").get_attribute("value"))})
+    user_data.update({"second_name": str(browser.find_element_by_xpath("(//input[@type='text'])[2]").get_attribute(
+        "value"))})
+    user_data.update({"birthdate": str(browser.find_element_by_xpath("//input[@name='date']").get_attribute(
+        "value"))})
+    user_data.update({"email": str(browser.find_element_by_xpath("(//input[@type='text'])[4]").get_attribute("value"))})
+    user_data.update({"country": str(browser.find_element_by_xpath("//*[@id='vs5__combobox']/div[1]/span"
+                                                                   ).get_attribute("innerText"))})
+    user_data.update({"city": str(browser.find_element_by_xpath("(//input[@type='text'])[5]").get_attribute("value"))})
+    user_data.update({"adress": str(browser.find_element_by_xpath("(//input[@type='text'])[6]").get_attribute(
+        "value"))})
+    user_data.update({"mobile": str(browser.find_element_by_xpath("//*[@id='vs6__combobox']/div[1]/span").get_attribute(
+        "innerText") + "-" + str(browser.find_element_by_xpath("//input[@type='tel']").get_attribute("value")))})
+    user_data.update({"currency": str(browser.find_element_by_xpath("//*[@id='vs7__combobox']/div[1]/span"
+                                                                    ).get_attribute("innerText"))})
+    user_data.update({"username": str(browser.find_element_by_xpath("(//input[@type='text'])[7]").get_attribute(
+        "value"))})
+    user_data.update({"refer_code": str(browser.find_element_by_xpath("(//input[@type='text'])[10]").get_attribute(
+        "value"))})
+    return user_data
+
+
+def admin_userdata_check():
+    browser.get("https://sback.nuxbet.com/")
+    browser.set_window_size(1100, 1020)
+    sleep(2)
+    browser.find_element_by_xpath("/html/body/div/div/div/form/div[1]/input").send_keys("sf3alexproc1313@gmail.com")
+    browser.find_element_by_xpath("/html/body/div/div/div/form/div[1]/div[3]/input").send_keys("enemy1307")
+    browser.find_element_by_xpath("/html/body/div/div/div/form/div[2]/button").click()
+    wait_for_element("/html/body/div/header/a")
+    browser.find_element_by_xpath("//a[contains(.,' Users')]").click()
+    sleep(1)
+    browser.find_element_by_xpath("//span[contains(.,'Players')]").click()
+    browser.find_element_by_xpath("//*[@id='adminUsers_filter']/label/input").send_keys(user_registration_info["name"])
+    browser.find_element_by_xpath("//*[@id='adminUsers_filter']/label/input").send_keys(Keys.ENTER)
+    sleep(1)
+    browser.find_element_by_css_selector("svg").click()
+    browser.find_element_by_css_selector("div:nth-child(1) > ul > li:nth-child(1) > a").click()
+    if str(browser.find_element_by_xpath("//input[@id='InputEmail']").get_attribute("value")) == \
+            str(user_registration_info["email"]):
+        print("email to DB, OK")
+    else:
+        print("email to DB, NotOK")
+    if str(browser.find_element_by_xpath("//input[@id='InputUserName']").get_attribute("value")) == str(
+            user_registration_info["username"]):
+        print("username to DB, OK")
+    else:
+        print("username to DB, NotOK")
+    if str(browser.find_element_by_xpath("//input[@id='InputPhone']").get_attribute("value")) == str(
+            user_registration_info["mobile"]):
+        print("phone to DB, OK")
+    else:
+        print("phone to DB, NotOK")
+    if str(browser.find_element_by_xpath("//select[@id='currency']").get_attribute("value")) == str(
+            user_registration_info["currency"]):
+        print("currency to DB, OK")
+    else:
+        print("currency to DB, NotOK")
+    if str(browser.find_element_by_xpath("//input[@name='country_id']").get_attribute("value")) == str(
+            user_registration_info["country"]):
+        print("country to DB, OK")
+    else:
+        print("country to DB, NotOK")
+    if str(browser.find_element_by_xpath("//input[@name='city']").get_attribute("value")) == str(
+            user_registration_info["city"]):
+        print("city to DB, OK")
+    else:
+        print("city to DB, NotOK")
+    if str(browser.find_element_by_xpath("//input[@name='street']").get_attribute("value")) == str(
+            user_registration_info["adress"]):
+        print("adress to DB, OK")
+    else:
+        print("adress to DB, NotOK")
+    if str(browser.find_element_by_xpath("//input[@name='ref_code']").get_attribute("value")) == str(
+            user_registration_info["refer_code"]):
+        print("ref code to DB, OK")
+    else:
+        print("ref code to DB, NotOK")
+
+
 open_main_page()
 open_registration_form()
 to_login_form_and_back()
 registration_negative_flow()
 registration_positive_flow()
+admin_userdata_check()
 browser.close()
