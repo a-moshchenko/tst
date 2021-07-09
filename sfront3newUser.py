@@ -129,11 +129,13 @@ def fill_all_fields():
     browser.find_element_by_xpath("(//input[@type='search'])[6]").send_keys("13")
     browser.find_element_by_xpath("(//input[@type='search'])[6]").send_keys(Keys.ENTER)
     browser.find_element_by_xpath("//input[@type='tel']").send_keys(f"321{random_four_digits_number()}")
+    browser.find_element_by_xpath("//*[@id='vs7__combobox']/div[1]/input").click()
     browser.find_element_by_xpath("(//input[@type='search'])[7]").send_keys("GBP")
     browser.find_element_by_xpath("(//input[@type='search'])[7]").send_keys(Keys.ENTER)
-    # browser.find_element_by_xpath("(//input[@type='search'])[7]").click()
-    # browser.find_element_by_xpath("//ul[@id='vs12__listbox']/li[4]").click()
-    # browser.find_element_by_xpath("(//input[@type='search'])[7]").send_keys(Keys.ENTER)
+    sleep(1)
+    browser.find_element_by_xpath("//*[@id='vs7__combobox']").click()
+    wait_for_element("//*[@id='vs7__option-3']")
+    browser.find_element_by_xpath("//*[@id='vs7__option-6']").click()
     browser.find_element_by_xpath("(//input[@type='text'])[7]").send_keys(f"{username}Login")
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
     browser.find_element_by_xpath("//div[2]/div[3]/div").click()
@@ -142,14 +144,14 @@ def fill_all_fields():
     else:
         print("password visibility, NotOK")
     sleep(1)
-    browser.find_element_by_xpath("//input[@type='password']")\
+    browser.find_element_by_xpath("//input[@type='password']") \
         .send_keys(config.PASSWORD)
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div[2]/div[5]/div").click()
     if str(browser.find_element_by_xpath("(//input[@type='text'])[9]").get_attribute("value")) == str(config.PASSWORD):
         print("password confirmation visibility, OK")
     else:
         print("password confirmation visibility, NotOK")
-    browser.find_element_by_xpath("(//input[@type='text'])[10]")\
+    browser.find_element_by_xpath("(//input[@type='text'])[10]") \
         .send_keys(config.REFCODE)
     terms_checkbox = browser.find_element_by_xpath("//div[2]/label")
     browser.execute_script("arguments[0].click();", terms_checkbox)
