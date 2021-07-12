@@ -52,7 +52,7 @@ def check_main_coeficients(sports_id):
         open_page(sports_id)
     except Exception as e:
         print(f"{sports_id} can't be reached, Error {e}")
-    elements = (browser.find_elements_by_xpath("//div[@class='numbersWrap']"))
+    elements = browser.find_elements_by_xpath("//div[@class='numbersWrap']")
     param_elements = (browser.find_elements_by_xpath("//div[@class='hasParams numbersWrap']"))
     for coeficient_element in elements:
         coef_list.append(float(coeficient_element.get_attribute("innerText")[coeficient_element.get_attribute(
