@@ -72,8 +72,9 @@ def check_main_coeficients(sports_id):
     for i in coef_list:
         if len(str(i).split(".")[-1]) > 2:
             print(f"too long coeficient, {i}")
-        if float(i) < 1.02 or float(1) > 51:
+        if float(i) < 1.01 or float(1) > 51:
             print(f"main coeficients Error, main coeficient value = {i}, Sport id = {sports_id}")
+            browser.save_screenshot(f"{screenshot_path}{i}{sports_id}CoefErrorNuxbet.png")
     print(f"Sport ID: {sports_id}, Main coefs: {coef_list}")
     logfile.write(f"Sport ID: {sports_id}, Main coefs: {coef_list}\n")
     ceck_subcoeficients()
