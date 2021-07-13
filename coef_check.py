@@ -32,7 +32,7 @@ logfile = open("betsNuxbetLog.txt", "a")
 
 
 def open_page(i):
-    browser.get(f"{config.COEFPAGE}{i}")
+    browser.get(f"{config.COEFPAGEPROD}{i}") #  COEFPAGE - for dev.
     wait_for_element("/html/body/div/div[2]/div/section/div[2]/div[2]")
     open_list_of_events()
 
@@ -49,7 +49,7 @@ def open_list_of_events():
 
 def wait_for_element(xpath):
     try:
-        WebDriverWait(browser, 20).until(
+        WebDriverWait(browser, 25).until(
             expected_conditions.presence_of_element_located((By.XPATH, xpath))
         )
     except Exception as e:

@@ -139,9 +139,77 @@ def login_negative_flow():
         print("Google account warning message, OK")
     else:
         print("Google account warning message, NotOK")
+    browser.refresh()
+
+
+def login_positive_flow():
+    browser.refresh()
+    browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHNAME)
+    browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
+    browser.find_element_by_xpath("//input[@type='password']").send_keys(Keys.ENTER)
+    wait_for_element(main_page_checkpoint)
+    if str(browser.page_source).find("autotestuser1672@mail.com") > 0:
+        print("email login, OK")
+    else:
+        print("email login, OK")
+    # log out
+    wait_for_element(main_page_checkpoint)
+    sleep(2)
+    try:
+        browser.find_element_by_xpath("//span[@class = 'userName ellipsis']").click()
+        sleep(1)  # ждем появления дропдаyн меню
+        browser.find_element_by_xpath("//a[@href='#']").click()
+        open_main_page()
+    except Exception as e:
+        print(f"log out Error, {e}")
+        # browser.close()
+    print("loged out")
+    browser.refresh()
+
+def forgot_password():
+    open_login_form()
+    browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div[1]/div[2]/div[2]").click()
+    wait_for_element("/html/body/div/div[1]/div[2]/div/div/div/div")
+    browser.find_element_by_xpath("//button[@class='mainBtn']").click()
+    if browser.find_element_by_xpath("//input [@type='text']").get_attribute("class") == "inputError":
+        print("Empty email field, OK")
+    else:
+        print("Empty email access recovery field, NotOK")
+    browser.find_element_by_xpath("//input[@type = 'text']").send_keys(config.AUTHNAME)
+    browser.find_element_by_xpath("//input[@type = 'text']").send_keys(Keys.ENTER)
+    sleep(1)
+    if str(browser.page_source).find("We have sent a verification code to your email") > 0:
+        print("access recovery, OK")
+    else:
+        print("access recovery, NotOK")
+
+    browser.refresh()
+    wait_for_element(main_page_checkpoint)
+    browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div[1]/div[2]/div[2]").click()
+    wait_for_element("/html/body/div/div[1]/div[2]/div/div/div/div")
+    browser.find_element_by_xpath("//input[@type = 'text']").send_keys(config.AUTHSHORTNAME)
+    browser.find_element_by_xpath("//input[@type = 'text']").send_keys(Keys.ENTER)
+    sleep(1)
+    if str(browser.page_source).find("Your password cannot be recovered, contact support.") > 0:
+        print("access recovery username warning, OK")
+        browser.save_screenshot(str(f"{screenshot_path}UsernamePasswordRecoverySFront3Nuxbet.png"))
+        browser.find_element_by_xpath("//button[@class='mainBtn']").click()
+        sleep(2)
+        if str(browser.current_url) == "https://sfront3.nuxbet.com/tickets/create":
+            print("ticket creation form, OK")
+            browser.save_screenshot(str(f"{screenshot_path}ticketCreationFormSFront3Nuxbet.png"))
+        else:
+            print("ticket creation form, NotOK")
+            browser.save_screenshot(str(f"{screenshot_path}ticketCreationFormSFront3Nuxbet.png"))
+    else:
+        print("access recovery username warning, NotOK")
+        browser.save_screenshot(str(f"{screenshot_path}UsernamePasswordRecoverySFront3Nuxbet.png"))
 
 
 open_main_page()
 open_login_form()
 sleep(1)
 login_negative_flow()
+login_positive_flow()
+forgot_password()
+browser.close()
