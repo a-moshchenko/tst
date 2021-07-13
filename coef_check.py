@@ -8,8 +8,13 @@ from selenium.webdriver.support import expected_conditions
 import config
 import logging
 
-logging.basicConfig(filename="betsNuxbetLog.txt", level=logging.DEBUG, filemode="a",
-                    format="%(name)s - %(levelname)s - %(message)s")
+logging.basicConfig(filename="betsNuxbetLog.txt", level=logging.INFO, filemode="a",
+                    format="%(name)s - %(levelname)s - %(asctime)s - %(message)s", datefmt='%d-%b-%y %H:%M:%S')
+log_variable = logging.getLogger(__name__)
+c_handler = logging.StreamHandler()
+f_handler = logging.FileHandler('file.log')
+c_handler.setLevel(logging.WARNING)
+f_handler.setLevel(logging.ERROR)
 chrome_options = webdriver.ChromeOptions()
 # chrome_options.add_argument("--incognito")
 
@@ -23,7 +28,7 @@ sports_list_id = {"Basketball": 2, "Tennis": 8, "AFL": 20, "Baseball": 1, "Beach
                   "Hockey": 6, "Rugby": 15, "Snooker": 11, "Table Tennis": 13, "Volleyball": 9, "Soccer": 7}
 coef_list = []
 main_coefs_list = []
-logfile = open("", "a")
+logfile = open("betsNuxbetLog.txt", "a")
 
 
 def open_page(i):
@@ -39,6 +44,7 @@ def open_list_of_events():
         open_list_of_events()
     except:  # Тут ексепшн является условием выхода из рекурсии
         print("all opened")
+        log_variable.info(f"all opened, Current URL: {browser.current_url}")
 
 
 def wait_for_element(xpath):
@@ -48,22 +54,24 @@ def wait_for_element(xpath):
         )
     except Exception as e:
         print(f"Element waiting error, Error, {e}")
+        log_variable.error(f"Element waiting error, Error {e}")
         # browser.close()
+        sleep(1)
 
 
 def check_main_coefficients(sports_id):
     try:
         open_page(sports_id)
-
         elements = browser.find_elements_by_xpath("//div[@class='numbersWrap']")
         param_elements = (browser.find_elements_by_xpath("//div[@class='hasParams numbersWrap']"))
         for coefficient_element in elements:
             coefficient_value = float(coefficient_element.get_attribute("innerText")[coefficient_element.get_attribute(
                 "innerText").find("\n") + 1:])
             coef_list.append(coefficient_value)
-            if len(str(coefficient_value)[-1]) < 2:
+            if len(str(coefficient_value)[-1].split(".")[-1]) > 2:
                 print(f"too long coefficient, {coefficient_element}")
-                logfile.write(f"too long coefficient, {coefficient_element}")
+                log_variable.warning(f"too long coefficient, {coefficient_element}")
+                # logfile.write(str(f"too long coefficient, {coefficient_element}"))
                 browser.save_screenshot(f"{screenshot_path}DevNuxbet.png")
                 coefficient_element.click()
                 browser.save_screenshot(f"{screenshot_path}{coefficient_element.get_attribute('id')}Sport"
@@ -80,10 +88,13 @@ def check_main_coefficients(sports_id):
                 print(f"main coefficients Error, main coefficient value = {coefficient_item}, Sport id = {sports_id}")
                 browser.save_screenshot(f"{screenshot_path}{coefficient_item}{sports_id}CoefErrorNuxbet.png")
         print(f"Sport ID: {sports_id}, Main coefs: {coef_list}")
-        logfile.write(f"Sport ID: {sports_id}, Main coefs: {coef_list}\n")
+        log_variable.info(f"Sport ID: {sports_id}, Main coefs: {coef_list}\n")
+        # logfile.write(f"Sport ID: {sports_id}, Main coefs: {coef_list}\n")
         check_event_coefficients()
     except Exception as e:
         print(f"{sports_id} can't be reached, Error {e}")
+        log_variable.warning(f"{sports_id} can't be reached, Error {e}")
+        # logfile.write(f"{sports_id} can't be reached, Error {e}")
 
 
 def check_event_coefficients():
@@ -113,8 +124,11 @@ def check_event_coefficients():
                     sleep(1)
             except Exception as e:
                 print(f"Element check error, {e}")
-        print(f" Event link: {event_link}; Sub-coefs:{list_of_event_coefficients}")
-        logfile.write(f" Event link: {event_link}; Sub-coefs:{list_of_event_coefficients}\n")
+                log_variable.error(f"Element check error, {e}")
+                # logfile.write(f"Element check error, {e}")
+        print(f" Event link: {event_link}; event-coefs:{list_of_event_coefficients}")
+        log_variable.info(f" Event link: {event_link}; event-coefs:{list_of_event_coefficients}\n")
+        # logfile.write(f" Event link: {event_link}; event-coefs:{list_of_event_coefficients}\n")
 
 
 for sport in sports_list_id:
