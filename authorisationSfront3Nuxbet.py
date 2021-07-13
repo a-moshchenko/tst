@@ -45,6 +45,7 @@ def open_login_form():
     browser.refresh()
     wait_for_element(registration_form_checkpoint)
 
+
 def login_negative_flow():
     # проверка пустых полей
     browser.find_element_by_xpath("//form/div[2]/button").click()
@@ -165,6 +166,7 @@ def login_positive_flow():
         # browser.close()
     print("loged out")
     browser.refresh()
+
 
 def forgot_password():
     open_login_form()

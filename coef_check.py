@@ -32,7 +32,7 @@ logfile = open("betsNuxbetLog.txt", "a")
 
 
 def open_page(i):
-    browser.get(f"{config.COEFPAGEPROD}{i}") #  COEFPAGE - for dev.
+    browser.get(f"{config.COEFPAGEPROD}{i}")  # COEFPAGE - for dev.
     wait_for_element("/html/body/div/div[2]/div/section/div[2]/div[2]")
     open_list_of_events()
 
@@ -68,7 +68,8 @@ def check_main_coefficients(sports_id):
             coefficient_value = float(coefficient_element.get_attribute("innerText")[coefficient_element.get_attribute(
                 "innerText").find("\n") + 1:])
             coef_list.append(coefficient_value)
-            if len(str(coefficient_value)[-1].split(".")[-1]) > 2:
+            max_digit_length = 2
+            if len(str(coefficient_value)[-1].split(".")[-1]) > max_digit_length:
                 print(f"too long coefficient, {coefficient_element}")
                 log_variable.warning(f"too long coefficient, {coefficient_element}")
                 # logfile.write(str(f"too long coefficient, {coefficient_element}"))
