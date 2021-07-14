@@ -69,9 +69,9 @@ def check_main_coefficients(sport_id):
     coefficient_mode = "Prematch"
     try:
         open_page(sport_id)
-        if str(browser.current_url).split("=")[-1] != str(1):
+        if str(browser.current_url).split("=")[-1] != str(sport_id):
             log_variable.error(f"Not current sport opened!ExpectedID{sport_id}CurrentID{(str(browser.current_url)[-2:])}")
-            browser.save_screenshot(f"ExpectedID{sport_id}CurrentID{(str(browser.current_url)[-2:])} ErrorNuxbet.png")
+            browser.save_screenshot(f"{screenshot_path}ExpectedID{sport_id}CurrentID{(str(browser.current_url)[-2:])} ErrorNuxbet.png")
             return "Error"
         elements = browser.find_elements_by_xpath("//div[@class='numbersWrap']")
         param_elements = (browser.find_elements_by_xpath("//div[@class='hasParams numbersWrap']"))
@@ -110,9 +110,9 @@ def check_main_coefficients_live(sport_id):
     coefficient_mode = "Live"
     try:
         open_page_live(sport_id)
-        if str(browser.current_url).split("=")[-1] != str(1):
+        if str(browser.current_url).split("=")[-1] != str(sport_id):
             log_variable.error(f"Not current sport opened!ExpectedID{sport_id}CurrentID{(str(browser.current_url)[-2:])}")
-            browser.save_screenshot(f"ExpectedID{sport_id}CurrentID{(str(browser.current_url)[-2:])} ErrorNuxbet.png")
+            browser.save_screenshot(f"{screenshot_path}ExpectedID{sport_id}CurrentID{(str(browser.current_url)[-2:])} ErrorNuxbet.png")
             return "Error"
         elements = browser.find_elements_by_xpath("//div[@class='numbersWrap']")
         param_elements = (browser.find_elements_by_xpath("//div[@class='hasParams numbersWrap']"))
