@@ -22,7 +22,7 @@ browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrom
 browser.set_window_size(1808, 1020)
 current_date = date.today()
 screenshot_date = current_date.strftime("%d,%m,%Y")
-screenshot_path = config.SCREENSHOTPATH
+screenshot_path = Path.cwd() / 'screenshots' / 'coef' / screenshot_date / 'a'
 sports_list_id = {"Snooker": 11}
 coef_list = []
 main_coefs_list = []
@@ -157,7 +157,9 @@ def check_event_coefficients(mode):
                 if float(event_coefficient.text) < 1.01 or \
                         float(event_coefficient.text) > 51:
                     event_coefficient.click()
-                    browser.save_screenshot(f"{screenshot_path}{event_coefficient.text}{event_link}DevNuxbet.png")
+                    print(event_link)
+                    browser.save_screenshot(f"{screenshot_path}{mode}{event_coefficient.text}EV{event_link[-7:]}DevNuxbet.png")
+                    log_variable.warning(f"{mode} Event link:{str(event_link)}; Coefficient value: {event_coefficient.text}")
                     wait_for_element("//div[@class='betSlipInnerWrap']")
                     wait_for_element("//button[@id='resetBet']")
                     browser.find_element_by_xpath("//button[@id='resetBet']").click()
@@ -168,7 +170,6 @@ def check_event_coefficients(mode):
                 # logfile.write(f"Element check error, {e}")
         print(f" {mode} Event link: {event_link}; event-coefs:{list_of_event_coefficients}")
         log_variable.info(f" {mode} Event link: {event_link}; event-coefs:{list_of_event_coefficients}\n")
-        # logfile.write(f" Event link: {event_link}; event-coefs:{list_of_event_coefficients}\n")
 
 
 for sport in sports_list_id:
