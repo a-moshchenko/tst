@@ -22,7 +22,7 @@ browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrom
 browser.set_window_size(1808, 1020)
 current_date = date.today()
 screenshot_date = current_date.strftime("%d,%m,%Y")
-screenshot_path = config.SCREENSHOTPATH
+screenshot_path = Path.cwd() / 'screenshots' / 'coef' / screenshot_date / 'a'
 sports_list_id = {"Cricket": 24}
 coef_list = []
 main_coefs_list = []
@@ -89,7 +89,7 @@ def check_main_coefficients(sport_id):
         for coefficient_item in coef_list:
             if len(str(coefficient_item).split(".")[-1]) > max_number_of_digits:
                 print(f"too long coeficient, {coefficient_item}")
-            if float(coefficient_item) < 1.01 or float(coefficient_item) > 51:
+            if float(coefficient_item) < 1.5 or float(coefficient_item) > 51:
                 print(f"main coefficients Error, main coefficient value = {coefficient_item}, Sport id = {sport_id}")
                 browser.save_screenshot(f"{screenshot_path}{coefficient_item}{sport_id}CoefErrorNuxbet.png")
         print(f"{coefficient_mode} Sport ID: {sport_id}, Main coefs: {coef_list}")
@@ -126,7 +126,7 @@ def check_main_coefficients_live(sport_id):
         for coefficient_item in coef_list:
             if len(str(coefficient_item).split(".")[-1]) > max_number_of_digits:
                 print(f"too long coeficient, {coefficient_item}")
-            if float(coefficient_item) < 1.01 or float(coefficient_item) > 51:
+            if float(coefficient_item) < 1.5 or float(coefficient_item) > 51:
                 print(f"main coefficients Error, main coefficient value = {coefficient_item}, Sport id = {sport_id}")
                 browser.save_screenshot(f"{screenshot_path}{coefficient_item}{sport_id}CoefErrorNuxbet.png")
         print(f"{coefficient_mode} Sport ID: {sport_id}, Main coefs: {coef_list}")
@@ -154,10 +154,12 @@ def check_event_coefficients(mode):
         for event_coefficient in event_coefficient_elements:
             list_of_event_coefficients.append(event_coefficient.text)
             try:
-                if float(event_coefficient.text) < 1.01 or \
+                if float(event_coefficient.text) < 1.5 or \
                         float(event_coefficient.text) > 51:
                     event_coefficient.click()
-                    browser.save_screenshot(f"{screenshot_path}{event_coefficient.text}{event_link}DevNuxbet.png")
+                    print(event_link)
+                    browser.save_screenshot(f"{screenshot_path}{mode}{event_coefficient.text}EV{event_link[-7:]}DevNuxbet.png")
+                    log_variable.warning(f"{mode} Event link:{str(event_link)}; Coefficient value: {event_coefficient.text}")
                     wait_for_element("//div[@class='betSlipInnerWrap']")
                     wait_for_element("//button[@id='resetBet']")
                     browser.find_element_by_xpath("//button[@id='resetBet']").click()
@@ -168,7 +170,6 @@ def check_event_coefficients(mode):
                 # logfile.write(f"Element check error, {e}")
         print(f" {mode} Event link: {event_link}; event-coefs:{list_of_event_coefficients}")
         log_variable.info(f" {mode} Event link: {event_link}; event-coefs:{list_of_event_coefficients}\n")
-        # logfile.write(f" Event link: {event_link}; event-coefs:{list_of_event_coefficients}\n")
 
 
 for sport in sports_list_id:
@@ -177,3 +178,8 @@ for sport in sports_list_id:
 for sport in sports_list_id:
     check_main_coefficients_live(sports_list_id[sport])
 browser.close()
+
+
+
+
+
