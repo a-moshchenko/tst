@@ -23,9 +23,7 @@ browser.set_window_size(1808, 1020)
 current_date = date.today()
 screenshot_date = current_date.strftime("%d,%m,%Y")
 screenshot_path = Path.cwd() / "screenshots" / "coef" / screenshot_date
-sports_list_id = {"Basketball": 2, "Tennis": 8, "AFL": 20, "Baseball": 1, "Beach Volleyball": 29,
-                  "Boxing / UFC": 18, "Cricket": 24, "Darts": 12, "E-Sports": 21, "Futsal": 4, "Handball": 5,
-                  "Hockey": 6, "Rugby": 15, "Snooker": 11, "Table Tennis": 13, "Volleyball": 9, "Soccer": 7}
+sports_list_id = {"AFL": 20}
 coef_list = []
 main_coefs_list = []
 logfile = open("coefficientsNuxbet.log", "a")

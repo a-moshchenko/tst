@@ -23,17 +23,22 @@ browser.set_window_size(1808, 1020)
 current_date = date.today()
 screenshot_date = current_date.strftime("%d,%m,%Y")
 screenshot_path = Path.cwd() / "screenshots" / "coef" / screenshot_date
-sports_list_id = {"Basketball": 2, "Tennis": 8, "AFL": 20, "Baseball": 1, "Beach Volleyball": 29,
-                  "Boxing / UFC": 18, "Cricket": 24, "Darts": 12, "E-Sports": 21, "Futsal": 4, "Handball": 5,
-                  "Hockey": 6, "Rugby": 15, "Snooker": 11, "Table Tennis": 13, "Volleyball": 9, "Soccer": 7}
+sports_list_id = {"Volleyball": 9}
 coef_list = []
 main_coefs_list = []
 logfile = open("coefficientsNuxbet.log", "a")
 
 
 def open_page(i):
-    # COEFPAGE - for dev; COEFLIVEPAGEPROD - for live events; COEFLIVEPAGE - for live dev-ivents
+    # COEFPAGE - for dev; COEFLIVEPAGEPROD - for live events; COEFLIVEPAGE - for live dev-events
     browser.get(f"{config.COEFPAGEPROD}{i}")
+    wait_for_element("/html/body/div/div[2]/div/section/div[2]/div[2]")
+    open_list_of_events()
+
+
+def open_page_live(i):
+    # COEFPAGE - for dev; COEFLIVEPAGEPROD - for live events; COEFLIVEPAGE - for live dev-events
+    browser.get(f"{config.COEFLIVEPAGEPROD}{i}")
     wait_for_element("/html/body/div/div[2]/div/section/div[2]/div[2]")
     open_list_of_events()
 
@@ -65,10 +70,11 @@ def check_main_coefficients(sport_id):
         open_page(sport_id)
         elements = browser.find_elements_by_xpath("//div[@class='numbersWrap']")
         param_elements = (browser.find_elements_by_xpath("//div[@class='hasParams numbersWrap']"))
+        max_number_of_digits = 2
         for coefficient_element in elements:
             coefficient_value = float(str(coefficient_element.get_attribute("innerText")).split("\n")[-1])
             coef_list.append(coefficient_value)
-            max_number_of_digits = 2
+
             if len(str(coefficient_value)[-1].split(".")[-1]) > max_number_of_digits:
                 print(f"too long coefficient, {coefficient_element}")
                 log_variable.warning(f"too long coefficient, {coefficient_element}")
@@ -97,6 +103,43 @@ def check_main_coefficients(sport_id):
         # logfile.write(f"{sports_id} can't be reached, Error {e}")
 
 
+def check_main_coefficients_live(sport_id):
+    try:
+        open_page_live(sport_id)
+        elements = browser.find_elements_by_xpath("//div[@class='numbersWrap']")
+        param_elements = (browser.find_elements_by_xpath("//div[@class='hasParams numbersWrap']"))
+        max_number_of_digits = 2
+        for coefficient_element in elements:
+            coefficient_value = float(str(coefficient_element.get_attribute("innerText")).split("\n")[-1])
+            coef_list.append(coefficient_value)
+            if len(str(coefficient_value)[-1].split(".")[-1]) > max_number_of_digits:
+                print(f"too long coefficient, {coefficient_element}")
+                log_variable.warning(f"Live too long coefficient, {coefficient_element}")
+                # logfile.write(str(f"too long coefficient, {coefficient_element}"))
+                browser.save_screenshot(f"{screenshot_path}DevNuxbet.png")
+                coefficient_element.click()
+                browser.save_screenshot(f"{screenshot_path}{coefficient_element.get_attribute('id')}Sport"
+                                        f"{sport_id}Error.png")
+        for param_coefficient_element in param_elements:
+            cutter_point = param_coefficient_element.get_attribute("innerText").find("\n") + 1
+            coef_list.append(param_coefficient_element.get_attribute(
+                "innerText")[cutter_point:])
+        for coefficient_item in coef_list:
+            if len(str(coefficient_item).split(".")[-1]) > max_number_of_digits:
+                print(f"too long coeficient, {coefficient_item}")
+            if float(coefficient_item) < 1.01 or float(coefficient_item) > 51:
+                print(f"main coefficients Error, main coefficient value = {coefficient_item}, Sport id = {sport_id}")
+                browser.save_screenshot(f"{screenshot_path}{coefficient_item}{sport_id}CoefErrorNuxbet.png")
+        print(f"Sport ID: {sport_id}, Main coefs: {coef_list}")
+        log_variable.info(f"Live Sport ID: {sport_id}, Main coefs: {coef_list}\n")
+        # logfile.write(f"Sport ID: {sports_id}, Main coefs: {coef_list}\n")
+        check_event_coefficients()
+    except Exception as e:
+        print(f"{sport_id} can't be reached, Error {e}")
+        log_variable.warning(f"{sport_id} can't be reached, Error {e}")
+        # logfile.write(f"{sports_id} can't be reached, Error {e}")
+
+
 def check_event_coefficients():
     betmore_elements = browser.find_elements_by_xpath("//div[@class='leftSpace moreEvensWrap']/a")
     list_of_hrefs = []
@@ -115,9 +158,7 @@ def check_event_coefficients():
                 if float(event_coefficient.get_attribute("innerText")) < 1.01 or \
                         float(event_coefficient.get_attribute("innerText")) > 51:
                     event_coefficient.click()
-                    browser.save_screenshot(f"{screenshot_path}"\
-                                                f"{event_coefficient.get_attribute('innerText')}"\
-                                                f"{event_link}DevNuxbet.png")
+                    browser.save_screenshot(f"{screenshot_path}{event_coefficient.get_attribute('innerText')}{event_link}DevNuxbet.png")
                     wait_for_element("//div[@class='betSlipInnerWrap']")
                     wait_for_element("//button[@id='resetBet']")
                     browser.find_element_by_xpath("//button[@id='resetBet']").click()
@@ -130,6 +171,10 @@ def check_event_coefficients():
         log_variable.info(f" Event link: {event_link}; event-coefs:{list_of_event_coefficients}\n")
         # logfile.write(f" Event link: {event_link}; event-coefs:{list_of_event_coefficients}\n")
 
+
+for sport in sports_list_id:
+    check_main_coefficients(sports_list_id[sport])
+browser.close()
 
 for sport in sports_list_id:
     check_main_coefficients(sports_list_id[sport])
