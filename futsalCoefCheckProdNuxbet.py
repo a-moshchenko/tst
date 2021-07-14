@@ -16,13 +16,13 @@ f_handler = logging.FileHandler('coefficientsNuxbet.log')
 c_handler.setLevel(logging.WARNING)
 f_handler.setLevel(logging.ERROR)
 chrome_options = webdriver.ChromeOptions()
-# chrome_options.add_argument("headless")
+chrome_options.add_argument("headless")
 
-browser = webdriver.Chrome(executable_path=r"C:\chromedriver\chromedriver.exe", options=chrome_options)
+browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
 browser.set_window_size(1808, 1020)
 current_date = date.today()
 screenshot_date = current_date.strftime("%d,%m,%Y")
-screenshot_path = Path.cwd() / "screenshots" / "coef" / screenshot_date
+screenshot_path = config.SCREENSHOTPATH
 sports_list_id = {"Futsal": 4}
 coef_list = []
 main_coefs_list = []
@@ -66,15 +66,15 @@ def wait_for_element(xpath):
 
 
 def check_main_coefficients(sport_id):
+    coefficient_mode = "Prematch"
     try:
         open_page(sport_id)
         elements = browser.find_elements_by_xpath("//div[@class='numbersWrap']")
         param_elements = (browser.find_elements_by_xpath("//div[@class='hasParams numbersWrap']"))
         max_number_of_digits = 2
         for coefficient_element in elements:
-            coefficient_value = float(str(coefficient_element.get_attribute("innerText")).split("\n")[-1])
+            coefficient_value = float(coefficient_element.text.split("\n")[-1])
             coef_list.append(coefficient_value)
-
             if len(str(coefficient_value)[-1].split(".")[-1]) > max_number_of_digits:
                 print(f"too long coefficient, {coefficient_element}")
                 log_variable.warning(f"too long coefficient, {coefficient_element}")
@@ -84,19 +84,18 @@ def check_main_coefficients(sport_id):
                 browser.save_screenshot(f"{screenshot_path}{coefficient_element.get_attribute('id')}Sport"
                                         f"{sport_id}Error.png")
         for param_coefficient_element in param_elements:
-            cutter_point = param_coefficient_element.get_attribute("innerText").find("\n") + 1
-            coef_list.append(param_coefficient_element.get_attribute(
-                "innerText")[cutter_point:])
+            # cutter_point = param_coefficient_element.get_attribute("innerText").find("\n") + 1
+            coef_list.append(param_coefficient_element.text.split("\n")[-1])
         for coefficient_item in coef_list:
             if len(str(coefficient_item).split(".")[-1]) > max_number_of_digits:
                 print(f"too long coeficient, {coefficient_item}")
             if float(coefficient_item) < 1.01 or float(coefficient_item) > 51:
                 print(f"main coefficients Error, main coefficient value = {coefficient_item}, Sport id = {sport_id}")
                 browser.save_screenshot(f"{screenshot_path}{coefficient_item}{sport_id}CoefErrorNuxbet.png")
-        print(f"Sport ID: {sport_id}, Main coefs: {coef_list}")
-        log_variable.info(f"Sport ID: {sport_id}, Main coefs: {coef_list}\n")
+        print(f"{coefficient_mode} Sport ID: {sport_id}, Main coefs: {coef_list}")
+        log_variable.info(f"{coefficient_mode}Sport ID: {sport_id}, Main coefs: {coef_list}\n")
         # logfile.write(f"Sport ID: {sports_id}, Main coefs: {coef_list}\n")
-        check_event_coefficients()
+        check_event_coefficients(coefficient_mode)
     except Exception as e:
         print(f"{sport_id} can't be reached, Error {e}")
         log_variable.warning(f"{sport_id} can't be reached, Error {e}")
@@ -104,13 +103,14 @@ def check_main_coefficients(sport_id):
 
 
 def check_main_coefficients_live(sport_id):
+    coefficient_mode = "Live"
     try:
         open_page_live(sport_id)
         elements = browser.find_elements_by_xpath("//div[@class='numbersWrap']")
         param_elements = (browser.find_elements_by_xpath("//div[@class='hasParams numbersWrap']"))
         max_number_of_digits = 2
         for coefficient_element in elements:
-            coefficient_value = float(str(coefficient_element.get_attribute("innerText")).split("\n")[-1])
+            coefficient_value = float(coefficient_element.text.split("\n")[-1])
             coef_list.append(coefficient_value)
             if len(str(coefficient_value)[-1].split(".")[-1]) > max_number_of_digits:
                 print(f"too long coefficient, {coefficient_element}")
@@ -121,26 +121,25 @@ def check_main_coefficients_live(sport_id):
                 browser.save_screenshot(f"{screenshot_path}{coefficient_element.get_attribute('id')}Sport"
                                         f"{sport_id}Error.png")
         for param_coefficient_element in param_elements:
-            cutter_point = param_coefficient_element.get_attribute("innerText").find("\n") + 1
-            coef_list.append(param_coefficient_element.get_attribute(
-                "innerText")[cutter_point:])
+            # cutter_point = param_coefficient_element.get_attribute("innerText").find("\n") + 1
+            coef_list.append(param_coefficient_element.text.split("\n")[-1])
         for coefficient_item in coef_list:
             if len(str(coefficient_item).split(".")[-1]) > max_number_of_digits:
                 print(f"too long coeficient, {coefficient_item}")
             if float(coefficient_item) < 1.01 or float(coefficient_item) > 51:
                 print(f"main coefficients Error, main coefficient value = {coefficient_item}, Sport id = {sport_id}")
                 browser.save_screenshot(f"{screenshot_path}{coefficient_item}{sport_id}CoefErrorNuxbet.png")
-        print(f"Sport ID: {sport_id}, Main coefs: {coef_list}")
-        log_variable.info(f"Live Sport ID: {sport_id}, Main coefs: {coef_list}\n")
+        print(f"{coefficient_mode} Sport ID: {sport_id}, Main coefs: {coef_list}")
+        log_variable.info(f"{coefficient_mode} Sport ID: {sport_id}, Main coefs: {coef_list}\n")
         # logfile.write(f"Sport ID: {sports_id}, Main coefs: {coef_list}\n")
-        check_event_coefficients()
+        check_event_coefficients(f"{coefficient_mode}")
     except Exception as e:
         print(f"{sport_id} can't be reached, Error {e}")
         log_variable.warning(f"{sport_id} can't be reached, Error {e}")
         # logfile.write(f"{sports_id} can't be reached, Error {e}")
 
 
-def check_event_coefficients():
+def check_event_coefficients(mode):
     betmore_elements = browser.find_elements_by_xpath("//div[@class='leftSpace moreEvensWrap']/a")
     list_of_hrefs = []
     for betmore_element in betmore_elements:
@@ -153,30 +152,28 @@ def check_event_coefficients():
         sleep(1)
         event_coefficient_elements = browser.find_elements_by_xpath("//span[@class='odd']")
         for event_coefficient in event_coefficient_elements:
-            list_of_event_coefficients.append(event_coefficient.get_attribute("innerText"))
+            list_of_event_coefficients.append(event_coefficient.text)
             try:
-                if float(event_coefficient.get_attribute("innerText")) < 1.01 or \
-                        float(event_coefficient.get_attribute("innerText")) > 51:
+                if float(event_coefficient.text) < 1.01 or \
+                        float(event_coefficient.text) > 51:
                     event_coefficient.click()
-                    browser.save_screenshot(
-                        f"{screenshot_path}{event_coefficient.get_attribute('innerText')}{event_link}DevNuxbet.png")
+                    browser.save_screenshot(f"{screenshot_path}{event_coefficient.text}{event_link}DevNuxbet.png")
                     wait_for_element("//div[@class='betSlipInnerWrap']")
                     wait_for_element("//button[@id='resetBet']")
                     browser.find_element_by_xpath("//button[@id='resetBet']").click()
                     sleep(1)
             except Exception as e:
                 print(f"Element check error, {e}")
-                log_variable.error(f"Element check error, {e}")
+                log_variable.error(f"{mode}Element check error, {e}")
                 # logfile.write(f"Element check error, {e}")
-        print(f" Event link: {event_link}; event-coefs:{list_of_event_coefficients}")
-        log_variable.info(f" Event link: {event_link}; event-coefs:{list_of_event_coefficients}\n")
+        print(f" {mode} Event link: {event_link}; event-coefs:{list_of_event_coefficients}")
+        log_variable.info(f" {mode} Event link: {event_link}; event-coefs:{list_of_event_coefficients}\n")
         # logfile.write(f" Event link: {event_link}; event-coefs:{list_of_event_coefficients}\n")
 
 
 for sport in sports_list_id:
     check_main_coefficients(sports_list_id[sport])
-browser.close()
 
 for sport in sports_list_id:
-    check_main_coefficients(sports_list_id[sport])
+    check_main_coefficients_live(sports_list_id[sport])
 browser.close()
