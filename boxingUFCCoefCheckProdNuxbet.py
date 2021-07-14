@@ -16,7 +16,7 @@ f_handler = logging.FileHandler('coefficientsNuxbet.log')
 c_handler.setLevel(logging.WARNING)
 f_handler.setLevel(logging.ERROR)
 chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument("headless")
+# chrome_options.add_argument("headless")
 
 browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
 browser.set_window_size(1808, 1020)
@@ -69,6 +69,10 @@ def check_main_coefficients(sport_id):
     coefficient_mode = "Prematch"
     try:
         open_page(sport_id)
+        if str(browser.current_url).split("=")[-1] != str(1):
+            log_variable.error(f"Not current sport opened!ExpectedID{sport_id}CurrentID{(str(browser.current_url)[-2:])}")
+            browser.save_screenshot(f"ExpectedID{sport_id}CurrentID{(str(browser.current_url)[-2:])} ErrorNuxbet.png")
+            return "Error"
         elements = browser.find_elements_by_xpath("//div[@class='numbersWrap']")
         param_elements = (browser.find_elements_by_xpath("//div[@class='hasParams numbersWrap']"))
         max_number_of_digits = 2
@@ -106,6 +110,10 @@ def check_main_coefficients_live(sport_id):
     coefficient_mode = "Live"
     try:
         open_page_live(sport_id)
+        if str(browser.current_url).split("=")[-1] != str(1):
+            log_variable.error(f"Not current sport opened!ExpectedID{sport_id}CurrentID{(str(browser.current_url)[-2:])}")
+            browser.save_screenshot(f"ExpectedID{sport_id}CurrentID{(str(browser.current_url)[-2:])} ErrorNuxbet.png")
+            return "Error"
         elements = browser.find_elements_by_xpath("//div[@class='numbersWrap']")
         param_elements = (browser.find_elements_by_xpath("//div[@class='hasParams numbersWrap']"))
         max_number_of_digits = 2
