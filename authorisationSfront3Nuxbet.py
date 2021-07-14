@@ -1,5 +1,3 @@
-""""Дописать позитив флоу и восстановление пароля"""
-
 from time import sleep
 from pathlib import Path
 from datetime import date
@@ -17,7 +15,7 @@ chrome_options.add_argument("--incognito")
 browser = webdriver.Chrome(executable_path=Path.cwd()/"driwers"/"chromedriver.exe", options=chrome_options)
 current_date = date.today()
 date = current_date.strftime("%d,%m,%Y")
-screenshot_path = Path.cwd()/"screenshots"/date
+screenshot_path = config.SCREENSHOTPATH
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 registration_form_checkpoint = "/html/body/div/div[1]/div[2]/div/div/div/div"
 
