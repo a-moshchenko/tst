@@ -51,9 +51,9 @@ def final_checks():
         print("password visibility, NotOK")
     if browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/div[5]/input"
                                      ).get_attribute("value") == config.PASSWD:
-        print("passwordCon visibility, OK")
+        print("password confirmation visibility, OK")
     else:
-        print("passwordCon visibility, NotOK")
+        print("password confirmation visibility, NotOK")
 
 
 def open():
@@ -148,7 +148,7 @@ def terms_and_conditions_confirmation():
         # Соглашаемся с T&C
         terms_checkbox = browser.find_element_by_css_selector("label:nth-child(10)")
         browser.execute_script("arguments[0].click();", terms_checkbox)
-        print("T&C acepted, OK")
+        print("T&C accepted, OK")
     except Exception as ex:
         print(f"T&C ERROR, {ex}")
 
@@ -172,7 +172,7 @@ def registration_valid():
     terms_and_conditions_confirmation()
     final_checks()
     registration_form_button = browser.find_element_by_xpath(
-        "/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/div[7]/button")
+        "//button[@class='mainBtn']")
     browser.save_screenshot(str(f"{screenshot_path}RegistrationNuxbet.png"))
     registration_form_button.click()
     registred_user_check()
