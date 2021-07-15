@@ -254,7 +254,7 @@ def login_via_google():
 def registration_positive_flow():
     fill_all_fields()
     username = str(browser.find_element_by_xpath("(//input[@type='text'])[4]").get_attribute("value"))[:-9]
-    print(f"""Username: {username}\nPassword: {config.PASSWORD}\nPhone: {browser.find_element_by_xpath(
+    print(f"""Username: {username}\nPassword: { config.PASSWORD}\nPhone: {browser.find_element_by_xpath(
         "//input[@type='tel']").get_attribute("value")}""")
     global user_registration_info
     user_registration_data(user_registration_info)

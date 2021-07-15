@@ -48,7 +48,7 @@ def wait_for_element(xpath):
             expected_conditions.presence_of_element_located((By.XPATH, xpath))
         )
     except Exception as e:
-        print(f"registr form open, Error, {e}")
+        print(f"registration form open, Error, {e}")
         browser.close()
 
 
@@ -77,9 +77,9 @@ def open_admin_socialite():
     browser.get("https://sback.nuxbet.com/")
     browser.set_window_size(1086, 1020)
     sleep(2)
-    browser.find_element_by_xpath("/html/body/div/div/div/form/div[1]/input").send_keys("admin_test@nuxbet.com")
-    browser.find_element_by_xpath("/html/body/div/div/div/form/div[1]/div[3]/input").send_keys("secretZ1")
-    browser.find_element_by_xpath("/html/body/div/div/div/form/div[2]/button").click()
+    browser.find_element_by_xpath("//input[@type='email']").send_keys("admin_test@nuxbet.com")
+    browser.find_element_by_xpath("//input[@type='password']").send_keys("secretZ1")
+    browser.find_element_by_xpath("//button[@type='submit']").click()
     sleep(1)
     browser.find_element_by_xpath("/html/body/div[1]/aside/section/ul/li[9]/a").click()
     sleep(1)
@@ -217,15 +217,21 @@ def social_networks_log_in():
 def gmail_login():
     browser.get("https://www.google.com/?gws_rd=ssl")
     browser.find_element_by_xpath("/html/body/div[1]/div[1]/div/div/div/div[2]/a").click()
-    browser.find_element_by_xpath("/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[1]/div/div[1]/div/div[1]/input").send_keys(config.DEFAULTMAIL)
-    browser.find_element_by_xpath("/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button/span").click()
+    browser.find_element_by_xpath(
+        "/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span"
+        "/section/div/div/div[1]/div/div[1]/div/div[1]/input").send_keys(config.DEFAULTMAIL)
+    browser.find_element_by_xpath(
+        "/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button/span").click()
     sleep(2)
-    browser.find_element_by_xpath("/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[1]/div[1]/div/div/div/div/div[1]/div/div[1]/input").send_keys(config.PASSWORD)
-    browser.find_element_by_xpath("/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button/span").click()
+    browser.find_element_by_xpath(
+        "/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/"
+        "div/div/div[1]/div[1]/div/div/div/div/div[1]/div/div[1]/input").send_keys(config.PASSWORD)
+    browser.find_element_by_xpath(
+        "/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button/span").click()
     open()
-    sleep(1)
+    sleep(2)
     try:
-        browser.find_element_by_class_name("formWrap authForm")
+        browser.find_element_by_xpath("//div[@class='formWrap authForm']")
     except: # тут ексепшн используется как логическое ветвление, поэтому не описан
         authorisation_form_open()
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/div[6]/div/a[2]/img"
@@ -234,16 +240,22 @@ def gmail_login():
     if str(browser.current_url) != "https://sfront1.nuxbet.com/":
         if str(browser.page_source).find("nuxbetchk@gmail.com") > 0:
             browser.find_element_by_xpath("//div/ul/li[1]/div").click()
-            browser.find_element_by_xpath("/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[2]/div[1]/div/div/div/div/div[1]/div/div[1]/input").send_keys("secretZ1")
-            browser.find_element_by_xpath("/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button/span").click()
+            browser.find_element_by_xpath(
+                "/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/"
+                "div/div[2]/div[1]/div/div/div/div/div[1]/div/div[1]/input").send_keys("secretZ1")
+            browser.find_element_by_xpath(
+                "/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button/"
+                "span").click()
             sleep(1)
         else:
             sleep(2)
             browser.find_element_by_xpath(
-                "/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[1]/div/div[1]/div/div[1]/input").send_keys(
+                "/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/"
+                "div[1]/div/div[1]/div/div[1]/input").send_keys(
                 "nuxbetchk@gmail.com")
             browser.find_element_by_xpath(
-                "/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[1]/div/div[1]/div/div[1]/input").send_keys(Keys.ENTER)
+                "/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/"
+                "div[1]/div/div[1]/div/div[1]/input").send_keys(Keys.ENTER)
             sleep(1)  # нужно чтоб форма гугла обновилась
             browser.find_element_by_xpath("//*[@id='password']/div[1]/div/div[1]/input").send_keys("secretZ1")
             sleep(1)
