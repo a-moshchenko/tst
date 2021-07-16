@@ -1,16 +1,17 @@
 from time import sleep
 from datetime import date
 from selenium import webdriver
-from pathlib import Path
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 import config
 
-browser = webdriver.Chrome(executable_path=Path.cwd()/"driwers"/"chromedriver.exe")
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("--incognito")
+browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
 current_date = date.today()
 data = current_date.strftime("%d,%m,%Y")
-screenshot_path = Path.cwd()/"screenshots"/data
+screenshot_path = config.SCREENSHOTPATHAUTH
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 logout_dropdown_menu = "/html/body/div/div[2]/div/section[4]/header"
 
@@ -25,7 +26,7 @@ def wait_for_element(xpath):
         browser.close()
 
 
-def open():
+def open_main_page():
     browser.get("https://nuxbet.com/")
     browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
@@ -47,7 +48,7 @@ def password_visibility_check():
 
 
 def login_positive_flow():
-    open()
+    open_main_page()
     browser.find_element_by_css_selector(".loginBtn").click()
 
     try:
@@ -65,7 +66,7 @@ def login_positive_flow():
     login_button.click()
     sleep(2)
     try:
-        uname = browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/span[1]")
+        uname = browser.find_element_by_xpath("//span[@class='userName ellipsis']")
         if uname.text == config.AUTH_NAME_EXIST:
             browser.save_screenshot(str(current_date) + "LogedInNuxbet.png")
             print("auth, OK")
@@ -81,15 +82,19 @@ def log_out():
     wait_for_element(logout_dropdown_menu)
     print("page loaded")
     try:
-        browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/span[2]").click()
+        browser.find_element_by_xpath("//span[@class='userName ellipsis']").click()
         sleep(1)
-        browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/div[2]/a[7]").click()
+        browser.find_element_by_xpath("//a[@href='#']").click()
     except Exception as e:
         print(f"logged out, {e}")
 
 
 def login_negative_flow():
-    open()
+    open_main_page()
+    try:
+        log_out()
+    except Exception as e:
+        print(f"Loged out, {e}")
     browser.find_element_by_css_selector(".loginBtn").click()
     try:
         browser.find_element_by_css_selector(".formHeader")
@@ -99,7 +104,7 @@ def login_negative_flow():
     login_mail = browser.find_element_by_xpath(
         "//input[@type='text']")  # проверка почты без собаки и незаполненный пароль
     login_mail.send_keys("noatmail")
-    login_button = browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div[2]/button")
+    login_button = browser.find_element_by_xpath("//button[@class='mainBtn']")
     login_button.click()
     sleep(1)  # слип нужен чтоб форма обновилась
     if str(login_mail.get_attribute("class")) == "inputError":
@@ -127,7 +132,7 @@ def login_negative_flow():
     login_button.click()
     sleep(1)  # слип нужен чтоб форма обновилась
     if str(login_mail.get_attribute("class")) != "inputError":
-        browser.save_screenshot(str(f"{current_date}NoPasswordNuxbet.png"))
+        browser.save_screenshot(f"{current_date}NoPasswordNuxbet.png")
         print("valid mail, OK")
     else:
         print("valid mail, NotOK")

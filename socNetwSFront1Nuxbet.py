@@ -1,6 +1,5 @@
 from time import sleep
 import random
-from pathlib import Path
 from datetime import date
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -15,10 +14,10 @@ print("Перед запуском, по возможности, отключи�
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--incognito")
 
-browser = webdriver.Chrome(executable_path=Path.cwd()/"driwers"/"chromedriver.exe", options=chrome_options)
+browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
 current_date = date.today()
 data = current_date.strftime("%d,%m,%Y")
-screenshot_path = Path.cwd()/"screenshots"/data
+screenshot_path = config.SCREENSHOTPATHAUTH
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 authorisation_form_checkpoint = "/html/body/div/div[1]/div[2]/div/div/div/div"
 social_networks_ui_basik_statement = {
@@ -60,7 +59,7 @@ def authorisation_form_open():
     wait_for_element(authorisation_form_checkpoint)
 
 
-def open():
+def open_main_page():
     browser.get(config.SFRONT1SITE)
     browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
@@ -91,18 +90,18 @@ def social_network_check(social_network_name):
     try:
         browser.find_element_by_xpath(f"//img[@alt = '{social_network_name}']")
         social_networks_ui_basik_statement[f"{social_network_name}"] = "On"
-    except:  # cама функция не должна ничего выводить, поэтому ексепшн не описан
+    except Exception:  # cама функция не должна ничего выводить, поэтому ексепшн не описан
         social_networks_ui_basik_statement[f"{social_network_name}"] = "Off"
 
 
 def social_networks_statement_check_ui():
     # тут заполняем social_networks_ui_basic_statement
-    open()
+    open_main_page()
     authorisation_form_open()
     sleep(2)
     for i in social_networks_ui_basik_statement.keys():
         social_network_check(i)
-    browser.save_screenshot(str(f"{current_date}BasicSocialUISFront1Nuxbet.png"))
+    browser.save_screenshot(f"{current_date}BasicSocialUISFront1Nuxbet.png")
     return social_networks_ui_basik_statement
 
 
@@ -141,7 +140,7 @@ def social_networks_turn_on():
     browser.find_element_by_xpath("/html/body/div/div/section[2]/div/div/div/div[2]/form/button").click()
     sleep(2)
     browser.find_element_by_xpath("/html/body/div/header/nav/div/ul/li/a/span").click()
-    open()
+    open_main_page()
     # auth_open()
     for i in social_networks_ui_current_statement.keys():
         try:
@@ -149,7 +148,7 @@ def social_networks_turn_on():
             print(f"{i} on, OK")
         except Exception as e:
             print(f"{i} on, NotOK, Error{e}")
-    browser.save_screenshot(str(f"{current_date}SocNetwONSFront1Nuxbet.png"))
+    browser.save_screenshot(f"{current_date}SocNetwONSFront1Nuxbet.png")
     return social_networks_ui_current_statement
 
 
@@ -165,13 +164,13 @@ def social_networks_turn_off():
     browser.find_element_by_xpath("/html/body/div/div/section[2]/div/div/div/div[2]/form/button").click()
     sleep(2)
     browser.find_element_by_xpath("/html/body/div/header/nav/div/ul/li/a/span").click()
-    open()
+    open_main_page()
     # auth_open()
     for i in social_networks_ui_current_statement.keys():
         try:
             browser.find_element_by_xpath(f"//img[@alt = '{i}']")
             print(f"{i} off, NotOK")
-        except:  # ексепшн является позитив флоу, поэтому не описан
+        except Exception:  # ексепшн является позитив флоу, поэтому не описан
             print(f"{i} off, OK")
     browser.save_screenshot(str(f"{current_date}SocNetwOFFSFront1Nuxbet.png"))
     return social_networks_ui_current_statement
@@ -187,15 +186,15 @@ def social_networks_set_to_default():
                 social_networks_admin_basik_statement.get(f"{i} client_secret"))
     browser.find_element_by_xpath("/html/body/div/div/section[2]/div/div/div/div[2]/form/button").click()
     sleep(2)
-    open()
+    open_main_page()
     sleep(1)
     # auth_open()
     sleep(1)
-    browser.save_screenshot(str(f"{current_date}ToNormalStatementSFront1Nuxbet.png"))
+    browser.save_screenshot(f"{current_date}ToNormalStatementSFront1Nuxbet.png")
 
 
 def social_networks_log_in():
-    open()
+    open_main_page()
     # auth_open()
     for i in social_networks_ui_basik_statement.keys():
         if i != "vkontakte":
@@ -210,8 +209,7 @@ def social_networks_log_in():
                     print(f"{i} follow, NotOK")
             sleep(1)
             browser.refresh()
-            open()
-        # open()
+            open_main_page()
 
 
 def gmail_login():
@@ -228,11 +226,11 @@ def gmail_login():
         "div/div/div[1]/div[1]/div/div/div/div/div[1]/div/div[1]/input").send_keys(config.PASSWORD)
     browser.find_element_by_xpath(
         "/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button/span").click()
-    open()
+    open_main_page()
     sleep(2)
     try:
         browser.find_element_by_xpath("//div[@class='formWrap authForm']")
-    except: # тут ексепшн используется как логическое ветвление, поэтому не описан
+    except Exception:  # тут ексепшн используется как логическое ветвление, поэтому не описан
         authorisation_form_open()
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/div[6]/div/a[2]/img"
                                   ).click()

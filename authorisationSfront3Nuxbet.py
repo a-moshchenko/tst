@@ -1,5 +1,4 @@
 from time import sleep
-from pathlib import Path
 from datetime import date
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -12,10 +11,10 @@ import config
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--incognito")
 
-browser = webdriver.Chrome(executable_path=Path.cwd()/"driwers"/"chromedriver.exe", options=chrome_options)
+browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
 current_date = date.today()
 date = current_date.strftime("%d,%m,%Y")
-screenshot_path = config.SCREENSHOTPATH
+screenshot_path = config.SCREENSHOTPATHAUTH
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 registration_form_checkpoint = "/html/body/div/div[1]/div[2]/div/div/div/div"
 
@@ -89,7 +88,7 @@ def login_negative_flow():
 
     # прверка видимого пароля
     browser.find_element_by_css_selector(".showPass").click()
-    if str(browser.find_element_by_xpath("(//input[@type='text'])[2]").get_attribute("value")) == str(config.PASSWORD):
+    if str(browser.find_element_by_xpath("(//input[@type='text'])[2]").get_attribute("value")) == config.PASSWORD:
         print("visible password, OK")
     else:
         print("visible password, NotOK")
@@ -119,7 +118,7 @@ def login_negative_flow():
     browser.refresh()
     browser.find_element_by_xpath("//input[@type='text']").clear()
     browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHNAME)
-    browser.find_element_by_xpath("//input[@type='password']").send_keys(str(config.PASSWORD)[1:])
+    browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD[1:])
     browser.find_element_by_xpath("//input[@type='text']").send_keys(Keys.ENTER)
     sleep(1)  # форма в это время обновляется
     if str(browser.page_source).find("Incorrect login or password. Please check again.") > 0:
@@ -131,7 +130,7 @@ def login_negative_flow():
     browser.refresh()
     browser.find_element_by_xpath("//input[@type='text']").clear()
     browser.find_element_by_xpath("//input[@type='text']").send_keys(config.DEFAULTMAIL)
-    browser.find_element_by_xpath("//input[@type='password']").send_keys(str(config.PASSWORD)[1:])
+    browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD[1:])
     browser.find_element_by_xpath("//input[@type='text']").send_keys(Keys.ENTER)
     sleep(1)  # форма в это время обновляется
     if str(browser.page_source).find("This account can only be logged by Google") > 0:
@@ -192,18 +191,18 @@ def forgot_password():
     sleep(1)
     if str(browser.page_source).find("Your password cannot be recovered, contact support.") > 0:
         print("access recovery username warning, OK")
-        browser.save_screenshot(str(f"{screenshot_path}UsernamePasswordRecoverySFront3Nuxbet.png"))
+        browser.save_screenshot(f"{screenshot_path}UsernamePasswordRecoverySFront3Nuxbet.png")
         browser.find_element_by_xpath("//button[@class='mainBtn']").click()
         sleep(2)
         if str(browser.current_url) == "https://sfront3.nuxbet.com/tickets/create":
             print("ticket creation form, OK")
-            browser.save_screenshot(str(f"{screenshot_path}ticketCreationFormSFront3Nuxbet.png"))
+            browser.save_screenshot(f"{screenshot_path}ticketCreationFormSFront3Nuxbet.png")
         else:
             print("ticket creation form, NotOK")
-            browser.save_screenshot(str(f"{screenshot_path}ticketCreationFormSFront3Nuxbet.png"))
+            browser.save_screenshot(f"{screenshot_path}ticketCreationFormSFront3Nuxbet.png")
     else:
         print("access recovery username warning, NotOK")
-        browser.save_screenshot(str(f"{screenshot_path}UsernamePasswordRecoverySFront3Nuxbet.png"))
+        browser.save_screenshot(f"{screenshot_path}UsernamePasswordRecoverySFront3Nuxbet.png")
 
 
 open_main_page()

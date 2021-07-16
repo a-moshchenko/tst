@@ -1,5 +1,4 @@
 from time import sleep
-from pathlib import Path
 from datetime import date
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -11,10 +10,10 @@ import config
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--incognito")
 
-browser = webdriver.Chrome(executable_path=Path.cwd()/"driwers"/"chromedriver.exe", options=chrome_options)
+browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
 current_date = date.today()
 date = current_date.strftime("%d,%m,%Y")
-screenshot_path = Path.cwd()/"screenshots"/date
+screenshot_path = config.SCREENSHOTPATHAUTH
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 login_form_checkpoint = "/html/body/div/div[1]/div[2]/div/div/div/div"
 
@@ -29,7 +28,7 @@ def wait_for_element(xpath):
         browser.close()
 
 
-def open():
+def open_main_page():
     browser.get(config.SFRONT1SITE)
     browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
@@ -88,7 +87,7 @@ def log_out():
 def visible_password():
     try:
         browser.find_element_by_css_selector(".showPass").click()
-        if browser.find_element_by_css_selector(".passWrap > input").get_attribute("value") == str(config.PASSWORD):
+        if browser.find_element_by_css_selector(".passWrap > input").get_attribute("value") == config.PASSWORD:
             browser.save_screenshot(f"{screenshot_path}PasswordVisibleSFront1Nuxbet.png")
         else:
             print("password visibility, NotOK")
@@ -249,7 +248,7 @@ def ticket_create():
         print("ticket created, NotOK")
         browser.save_screenshot(f"{screenshot_path}TicketCreatedFailSFront1Nuxbet.png")
     browser.refresh()
-    open()
+    open_main_page()
     wait_for_element(main_page_checkpoint)
     login_form_open()
     login_via_google()
@@ -273,7 +272,7 @@ def login_via_google():
         print("google login, NotOK")
 
 
-open()
+open_main_page()
 login_via_mail()
 login_negative_flow()
 browser.close()

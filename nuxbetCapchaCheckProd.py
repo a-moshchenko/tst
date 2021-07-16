@@ -1,19 +1,18 @@
 from time import sleep
 from selenium import webdriver
 from datetime import date
-from pathlib import Path
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 import config
 
-browser = webdriver.Chrome(executable_path=Path.cwd()/"driwers"/"chromedriver.exe")
+browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
 current_date = date.today()
 date = current_date.strftime("%d,%m,%Y")
-screenshot_path = Path.cwd()/"screenshots"/date
+screenshot_path = config.SCREENSHOTPATHAUTH
 
 
-def open():
+def open_main_page():
     browser.get("https://nuxbet.com/")
     browser.set_window_size(1086, 1020)
     try:
@@ -31,7 +30,7 @@ def login_form_open():
 
 
 def general_run():
-    open()
+    open_main_page()
     login_form_open()
     sleep(1)
     browser.find_element_by_xpath("//input[@type='text']").send_keys(
@@ -49,8 +48,8 @@ def general_run():
             login_button = browser.find_element_by_xpath(
                 "//div[7]/button")
             login_button.click()
-        except:
-            browser.save_screenshot(str(f"{screenshot_path}CapchaNuxbet.png"))
+        except Exception:
+            browser.save_screenshot(f"{screenshot_path}CapchaNuxbet.png")
             print("Capcha, OK")
             break
 

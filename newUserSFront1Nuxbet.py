@@ -2,7 +2,6 @@ from time import sleep
 import random
 from datetime import date
 from selenium import webdriver
-from pathlib import Path
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
@@ -10,10 +9,10 @@ import config
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--incognito")
-browser = webdriver.Chrome(executable_path=Path.cwd()/"driwers"/"chromedriver.exe", options=chrome_options)
+browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
 current_date = date.today()
 data = current_date.strftime("%d,%m,%Y")
-screenshot_path = Path.cwd()/"screenshots"/data
+screenshot_path = config.SCREENSHOTPATHAUTH
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 authorization_form_checkpoint = "/html/body/div/div[1]/div[2]/div/div/div/div"
 
@@ -39,7 +38,7 @@ def wait_for_element(xpath):
         browser.close()
 
 
-def open():
+def open_main_page():
     browser.get("https://sfront1.nuxbet.com/")
     browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
@@ -99,22 +98,22 @@ def password_visibility():
 
 
 def log_out():
-    open()
+    open_main_page()
     try:
         browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/span[1]").click()
         sleep(1)  # ждем появления дропдакн меню
         browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/div[2]/a[7]").click()
-        open()
+        open_main_page()
     except Exception as e:
         print(f"log out Error, {e}")
         browser.close()
     print("loged out")
 
 
-open()
+open_main_page()
 authorisation_form_open()
 fill_fields()
-browser.save_screenshot(str(f"{screenshot_path}SFront1Nuxbet.png"))
+browser.save_screenshot(f"{screenshot_path}SFront1Nuxbet.png")
 print(f"Username: {user_name}\nPassword: {config.PASSWORD}")
 sleep(2)
 browser.find_element_by_xpath("//div[6]/button").click()

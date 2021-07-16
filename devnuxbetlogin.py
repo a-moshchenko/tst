@@ -1,5 +1,4 @@
 from time import sleep
-from pathlib import Path
 from datetime import date
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -7,11 +6,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 import config
 
-executable_path = Path.cwd()/"driwers"/"chromedriver.exe"
-browser = webdriver.Chrome(executable_path=executable_path)
+browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
 current_date = date.today()
 date = current_date.strftime("%d,%m,%Y")
-screenshot_path = Path.cwd()/"screenshots"/date
+screenshot_path = config.SCREENSHOTPATHAUTH
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 logout_form_checkpoint = "/html/body/div/div[2]/div/section[4]/header"
 
@@ -26,7 +24,7 @@ def wait_for_element(xpath):
         browser.close()
 
 
-def open():
+def open_main_page():
     browser.get(config.SITE)
     browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
@@ -39,7 +37,7 @@ def password_visibility_check():
     password_visible = str(browser.find_element_by_xpath("//div[3]/input").get_attribute("value"))
     try:
         if password_visible == config.PASSWORD:
-            browser.save_screenshot(str(f"{screenshot_path}VisiblrPasswordDevNuxbet.png"))
+            browser.save_screenshot(f"{screenshot_path}VisiblrPasswordDevNuxbet.png")
             print("password visible, OK")
         else:
             print("password visible, NotOK")
@@ -48,7 +46,7 @@ def password_visibility_check():
 
 
 def login_positive_flow():
-    open()
+    open_main_page()
     browser.find_element_by_xpath("//div[3]/a").click()
 
     try:
@@ -70,7 +68,7 @@ def login_positive_flow():
         if uname.text == config.AUTH_NAME_EXIST:
             print("authorisation, OK")
             print("main page return, OK")
-            browser.save_screenshot(str(f"{screenshot_path}UserLogedInDevNuxbet.png"))
+            browser.save_screenshot(f"{screenshot_path}UserLogedInDevNuxbet.png")
         else:
             print(f"NOK, uname: {uname.text}")
     except Exception as e:
@@ -85,12 +83,12 @@ def log_out():
         browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/span[2]").click()
         sleep(1)
         browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/div[2]/a[7]").click()
-    except Exception:  # ексепшн является частью позитив флоу
-        print(f"loged out, {Exception}")
+    except Exception as e:  # ексепшн является частью позитив флоу
+        print(f"loged out, {e}")
 
 
 def login_negative_flow():
-    open()
+    open_main_page()
     browser.find_element_by_xpath("//div[3]/a").click()
     try:
         browser.find_element_by_css_selector(".formHeader")
@@ -103,7 +101,7 @@ def login_negative_flow():
     login_button.click()
     sleep(1)  # слип нужен чтоб форма обновилась
     if str(login_mail.get_attribute("class")) == "inputError":
-        browser.save_screenshot(str(f"{screenshot_path}NoEtMailLoginDevNuxbet.png"))
+        browser.save_screenshot(f"{screenshot_path}NoEtMailLoginDevNuxbet.png")
         print("mail without et, OK")
     else:
         print("mail without et, NotOK")
@@ -126,7 +124,7 @@ def login_negative_flow():
     login_button.click()
     sleep(1)  # слип нужен чтоб форма обновилась
     if str(login_mail.get_attribute("class")) != "inputError":
-        browser.save_screenshot(str(f"{screenshot_path}NoMailDevNuxbet.png"))
+        browser.save_screenshot(f"{screenshot_path}NoMailDevNuxbet.png")
         print("valid mail, OK")
     else:
         print("valid mail, NotOK")
@@ -140,7 +138,7 @@ def login_negative_flow():
     login_button.click()
     sleep(1)  # слип нужен чтоб форма обновилась
     if str(browser.page_source).find("Incorrect login or password. Please check again."):
-        browser.save_screenshot(str(f"{screenshot_path}WrongPasswordLoginPasswordDevNuxbet.png"))
+        browser.save_screenshot(f"{screenshot_path}WrongPasswordLoginPasswordDevNuxbet.png")
         print("invalid password message, OK")
     else:
         print("invalid password message, NotOK")

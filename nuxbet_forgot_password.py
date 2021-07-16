@@ -1,16 +1,15 @@
 from time import sleep
 from selenium import webdriver
 from datetime import date
-from pathlib import Path
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 import config
 
-browser = webdriver.Chrome(executable_path=Path.cwd()/"driwers"/"chromedriver.exe")
+browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
 current_date = date.today()
 date = current_date.strftime("%d,%m,%Y")
-screenshot_path = Path.cwd()/"screenshots"/date
+screenshot_path = config.SCREENSHOTPATHAUTH
 main_page_checkpoint = "/html/body/div/div[2]/div/section[4]/header"
 login_form_checkpoint = "/html/body/div/div[1]/div[2]/div/div/div/div"
 login_button_checkpoint = "/html/body/div/nav/div/a[2]"
@@ -26,14 +25,14 @@ def wait_for_element(xpath):
         print(f"page open, Error, {e}")
 
 
-def open():
+def open_main_page():
     browser.get(config.SITE)
     browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
 
 
 def login():
-    open()
+    open_main_page()
     login_button = browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/a")
     login_button.click()
     try:

@@ -1,7 +1,6 @@
 from time import sleep
 import random
 from datetime import date
-from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -10,10 +9,10 @@ import config
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--incognito")
-browser = webdriver.Chrome(executable_path=Path.cwd()/"driwers"/"chromedriver.exe", options=chrome_options)
+browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
 current_date = date.today()
 date = current_date.strftime("%d,%m,%Y")
-screenshot_path = Path.cwd()/"screenshots"/date
+screenshot_path = config.SCREENSHOTPATHAUTH
 authorisation_form_checkpoint = "/html/body/div/div[1]/div[2]/div/div/div/div"
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 
@@ -47,7 +46,7 @@ def authorisation_form_open():
     wait_for_element(authorisation_form_checkpoint)
 
 
-def open():
+def open_main_page():
     browser.get("https://sfront1.nuxbet.com/")
     browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
@@ -58,31 +57,19 @@ def negative_flow_authorization():
     # проверяем пустые поля
     authorisation_form_open()
     browser.find_element_by_xpath("//div[6]/button").click()
-    if browser.find_element_by_xpath("//input[@type='text']").get_attribute("class") == "inputError":
-        print("no username warning, OK")
-    else:
-        print("no username warning, NotOK")
-    if browser.find_element_by_xpath("//input[@type='password']").get_attribute("class") == "inputError":
-        print("no password warning, OK")
-    else:
-        print("no password warning, NotOK")
-    if browser.find_element_by_xpath("//input[@type='password']").get_attribute("class") == "inputError":
-        print("no password warning, OK")
-    else:
-        print("no password warning, NotOK")
-    if browser.find_element_by_xpath("(//input[@type='password'])[2]").get_attribute("class") == "inputError":
-        print("no password confirmation warning, OK")
-    else:
-        print("no password confirmation, NotOK")
-    if browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/label"
-                                     ).get_attribute("class") == "inputError":
-        print("no T&C confirmation warning, OK")
-    else:
-        print("no T&C confirmation, NotOK")
-    browser.save_screenshot(str(f"{screenshot_path}EmptyFieldsSFront1Nuxbet.png"))
+    def warning_check(object_address, checked_object):
+        if browser.find_element_by_xpath(object_address).get_attribute("class") == "inputError":
+            print(f"no {checked_object} warning, OK")
+        else:
+            print(f"no {checked_object} warning, NotOK")
+    warning_check("//input[@type='text']", "username")
+    warning_check("//input[@type='password']", "password")
+    warning_check("(//input[@type='password'])[2]", "password confirmation")
+    warning_check("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/label", "T&C confirmation")
+    browser.save_screenshot(f"{screenshot_path}EmptyFieldsSFront1Nuxbet.png")
 
     # проверяем без паролей
-    open()
+    open_main_page()
     # auth_open()
     browser.find_element_by_xpath("//input[@type='text']").send_keys("autotestuser0000")
     browser.find_element_by_xpath("//div[6]/button").click()
@@ -90,32 +77,19 @@ def negative_flow_authorization():
         print("no username warning, OK")
     else:
         print("no username warning, NotOK")
-    if browser.find_element_by_xpath("//input[@type='password']").get_attribute("class") == "inputError":
-        print("no password warning, OK")
-    else:
-        print("no password warning, NotOK")
-    if browser.find_element_by_xpath("//input[@type='password']").get_attribute("class") == "inputError":
-        print("no password warning, OK")
-    else:
-        print("no password warning, NotOK")
-    if browser.find_element_by_xpath("(//input[@type='password'])[2]").get_attribute("class") == "inputError":
-        print("no password confirmation warning, OK")
-    else:
-        print("no password confirmation, NotOK")
-    if browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/label"
-                                     ).get_attribute("class") == "inputError":
-        print("no T&C confirmation warning, OK")
-    else:
-        print("no T&C confirmation, NotOK")
+
+    warning_check("//input[@type='password']", "password")
+    warning_check("(//input[@type='password'])[2]", "password confirmation")
+    warning_check("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/label", "T&C confirmation")
     if str(browser.page_source).find("shortText.field_required") > 0 or str(browser.page_source
                                                                             ).find("This field is required") > 0:
         print("required field message, OK")
     else:
         print("required field message, NotOK")
-    browser.save_screenshot(str(f"{screenshot_path}EmptyPasswordsSFront1Nuxbet.png"))
+    browser.save_screenshot(f"{screenshot_path}EmptyPasswordsSFront1Nuxbet.png")
 
     # проверяем с неправильным подтверждением пароля
-    open()
+    open_main_page()
     # auth_open()
     browser.find_element_by_xpath("//input[@type='text']").send_keys("autotestuser0000")
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
@@ -126,10 +100,10 @@ def negative_flow_authorization():
         print("wrong password confirmation warning, OK")
     else:
         print("wrong password confirmation, NotOK")
-    browser.save_screenshot(str(f"{screenshot_path}WrongPasswordConfirmationSFront1Nuxbet.png"))
+    browser.save_screenshot(f"{screenshot_path}WrongPasswordConfirmationSFront1Nuxbet.png")
 
     # проверяем с нечекнутым T&C боксом
-    open()
+    open_main_page()
     # auth_open()
     browser.find_element_by_xpath("//input[@type='text']").send_keys("autotestuser0000")
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
@@ -142,17 +116,14 @@ def negative_flow_authorization():
         print("no T&C confirmation, NotOK")
 
     # проверяем киррилицу в поле юзернейм
-    open()
+    open_main_page()
     # auth_open()
     browser.find_element_by_xpath("//input[@type='text']").send_keys("юзернейм")
-    if browser.find_element_by_xpath("//input[@type='text']").get_attribute("class") == "inputError":
-        print("cyrylik username warning, OK")
-    else:
-        print("cyrylik username warning, NotOK")
-    browser.save_screenshot(str(f"{screenshot_path}CyrylikUsernameSFront1Nuxbet.png"))
+    warning_check("//input[@type='text']", "cyrylik username")
+    browser.save_screenshot(f"{screenshot_path}CyrylikUsernameSFront1Nuxbet.png")
 
     # проверяем ранее зарегистрированный юзернейм
-    open()
+    open_main_page()
     # auth_open()
     browser.find_element_by_xpath("//input[@type='text']").send_keys("autotestuser1672")
     browser.find_element_by_xpath("//input[@type='password']").send_keys("secretZ2")
@@ -168,9 +139,9 @@ def negative_flow_authorization():
         print("ExistingUser warning, OK")
     else:
         print("ExistingUser warning, NotOK")
-    browser.save_screenshot(str(f"{screenshot_path}ExistingUsernameSFront1Nuxbet.png"))
+    browser.save_screenshot(f"{screenshot_path}ExistingUsernameSFront1Nuxbet.png")
 
 
-open()
+open_main_page()
 negative_flow_authorization()
 browser.close()

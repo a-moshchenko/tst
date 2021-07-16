@@ -1,7 +1,6 @@
 from time import sleep
 import random
 from datetime import date
-from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -9,10 +8,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 import config
 
-browser = webdriver.Chrome(executable_path=Path.cwd()/"driwers"/"chromedriver.exe")
+browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
 current_date = date.today()
 data = current_date.strftime("%d,%m,%Y")
-screenshot_path = Path.cwd()/"screenshots"/data
+screenshot_path = config.SCREENSHOTPATHAUTH
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 registration_form_checkpoint = "/html/body/div/div[2]/div/section/div"
 authorisation_form_checkpoint = "/html/body/div/div[2]/div/section/div"
@@ -56,7 +55,7 @@ def final_checks():
         print("password confirmation visibility, NotOK")
 
 
-def open():
+def open_main_page():
     browser.get("https://nuxbet.com/")
     browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
@@ -173,13 +172,13 @@ def registration_valid():
     final_checks()
     registration_form_button = browser.find_element_by_xpath(
         "//button[@class='mainBtn']")
-    browser.save_screenshot(str(f"{screenshot_path}RegistrationNuxbet.png"))
+    browser.save_screenshot(f"{screenshot_path}RegistrationNuxbet.png")
     registration_form_button.click()
     registred_user_check()
     print(f"Username: {user_name}\nUsermail: {user_name}@mail.com")
 
 
-open()
+open_main_page()
 try:
     registration_valid()
 except Exception as e:

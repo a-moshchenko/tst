@@ -1,16 +1,15 @@
 from time import sleep
 from datetime import date
-from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 import config
 
-browser = webdriver.Chrome(executable_path=Path.cwd()/"driwers"/"chromedriver.exe")
+browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
 current_date = date.today()
 data = current_date.strftime("%d,%m,%Y")
-screenshot_path = Path.cwd()/"screenshots"/data
+screenshot_path = config.SCREENSHOTPATHAUTH
 main_page_checkpoint = "/html/body/div/div[2]/div/section[4]/header"
 
 
@@ -24,7 +23,7 @@ def wait_for_element(xpath):
         browser.close()
 
 
-def open():
+def open_main_page():
     browser.get(config.SITE)
     browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
@@ -36,7 +35,7 @@ def login_opn():
 
 
 def general_run():
-    open()
+    open_main_page()
     login_opn()
     sleep(1)
     browser.find_element_by_xpath("//input[@type='text']").send_keys(
@@ -56,9 +55,9 @@ def general_run():
             login_button = browser.find_element_by_xpath(
                 "/html/body/div/div[2]/div/section/div/form/div/div/div[8]/button")
             login_button.click()
-        except:  # ексепшн является ожидаемым результатом, поэтому не описан
+        except Exception:  # ексепшн является ожидаемым результатом, поэтому не описан
             print(f"Capcha, OK")
-            browser.save_screenshot(str(f"{screenshot_path}Capchadevnuxbet.png"))
+            browser.save_screenshot(f"{screenshot_path}Capchadevnuxbet.png")
             break
 
 

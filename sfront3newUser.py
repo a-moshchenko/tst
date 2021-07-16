@@ -1,22 +1,20 @@
 import random
 from time import sleep
-from pathlib import Path
 from datetime import date
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
-
 import config
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--incognito")
 
-browser = webdriver.Chrome(executable_path=Path.cwd()/"driwers"/"chromedriver.exe", options=chrome_options)
+browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
 current_date = date.today()
 date = current_date.strftime("%d,%m,%Y")
-screenshot_path = Path.cwd()/"screenshots"/date
+screenshot_path = config.SCREENSHOTPATHAUTH
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 registration_form_checkpoint = "/html/body/div/div[1]/div[2]/div/div/div/div"
 user_registration_info = {}
@@ -115,7 +113,7 @@ def fill_all_fields():
     browser.find_element_by_xpath("//tr[3]/td[4]/div").click()
     try:
         browser.find_element_by_xpath("//div[@class='mx-calendar-content']")
-    except:  # тут ексепшн используется как проверка наличия элемента
+    except Exception:  # тут ексепшн используется как проверка наличия элемента
         print("too young user regisntation, NotOK")
     move_calendar_left.click()
     move_calendar_left.click()
@@ -139,7 +137,7 @@ def fill_all_fields():
     browser.find_element_by_xpath("(//input[@type='text'])[7]").send_keys(f"{username}Login")
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
     browser.find_element_by_xpath("//div[2]/div[3]/div").click()
-    if str(browser.find_element_by_xpath("(//input[@type='text'])[8]").get_attribute("value")) == str(config.PASSWORD):
+    if str(browser.find_element_by_xpath("(//input[@type='text'])[8]").get_attribute("value")) == config.PASSWORD:
         print("password visibility, OK")
     else:
         print("password visibility, NotOK")
@@ -147,7 +145,7 @@ def fill_all_fields():
     browser.find_element_by_xpath("//input[@type='password']") \
         .send_keys(config.PASSWORD)
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div[2]/div[5]/div").click()
-    if str(browser.find_element_by_xpath("(//input[@type='text'])[9]").get_attribute("value")) == str(config.PASSWORD):
+    if str(browser.find_element_by_xpath("(//input[@type='text'])[9]").get_attribute("value")) == config.PASSWORD:
         print("password confirmation visibility, OK")
     else:
         print("password confirmation visibility, NotOK")
@@ -214,7 +212,7 @@ def invalid_email_check():
 def registration_negative_flow():
     try:
         browser.find_element_by_xpath("//div[@class='btnWrap regBtn']")
-    except:  # тут ексепшн использован для проверки наличия открытой формы регистрации, поэтому он не описан
+    except Exception:  # тут ексепшн использован для проверки наличия открытой формы регистрации, поэтому он не описан
         open_registration_form()
     empty_fields_check()
     browser.refresh()
@@ -254,7 +252,7 @@ def login_via_google():
 def registration_positive_flow():
     fill_all_fields()
     username = str(browser.find_element_by_xpath("(//input[@type='text'])[4]").get_attribute("value"))[:-9]
-    print(f"""Username: {username}\nPassword: { config.PASSWORD}\nPhone: {browser.find_element_by_xpath(
+    print(f"""Username: {username}\nPassword: {config.PASSWORD}\nPhone: {browser.find_element_by_xpath(
         "//input[@type='tel']").get_attribute("value")}""")
     global user_registration_info
     user_registration_data(user_registration_info)
