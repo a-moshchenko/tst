@@ -101,7 +101,7 @@ def login_negative_flow():
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
     browser.find_element_by_xpath("//input[@type='text']").send_keys(Keys.ENTER)
     sleep(1)  # форма в это время обновляется
-    if str(browser.page_source).find("Incorrect login or password. Please check again.") > 0:
+    if browser.page_source.find("Incorrect login or password. Please check again.") > 0:
         print("incorrect input warning message, OK")
     else:
         print("incorrect input warning message, NotOK")
@@ -113,7 +113,7 @@ def login_negative_flow():
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD[1:])
     browser.find_element_by_xpath("//input[@type='text']").send_keys(Keys.ENTER)
     sleep(1)  # форма в это время обновляется
-    if str(browser.page_source).find("Incorrect login or password. Please check again.") > 0:
+    if browser.page_source.find("Incorrect login or password. Please check again.") > 0:
         print("incorrect login or password message, OK")
     else:
         print("incorrect login or password message, NotOK")
@@ -125,7 +125,7 @@ def login_negative_flow():
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD[1:])
     browser.find_element_by_xpath("//input[@type='text']").send_keys(Keys.ENTER)
     sleep(1)  # форма в это время обновляется
-    if str(browser.page_source).find("This account can only be logged by Google") > 0:
+    if browser.page_source.find("This account can only be logged by Google") > 0:
         print("Google account warning message, OK")
     else:
         print("Google account warning message, NotOK")
@@ -138,7 +138,7 @@ def login_positive_flow():
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
     browser.find_element_by_xpath("//input[@type='password']").send_keys(Keys.ENTER)
     wait_for_element(main_page_checkpoint)
-    if str(browser.page_source).find("autotestuser1672@mail.com") > 0:
+    if browser.page_source.find("autotestuser1672@mail.com") > 0:
         print("email login, OK")
     else:
         print("email login, OK")
@@ -169,7 +169,7 @@ def forgot_password():
     browser.find_element_by_xpath("//input[@type = 'text']").send_keys(config.AUTHNAME)
     browser.find_element_by_xpath("//input[@type = 'text']").send_keys(Keys.ENTER)
     sleep(1)
-    if str(browser.page_source).find("We have sent a verification code to your email") > 0:
+    if browser.page_source.find("We have sent a verification code to your email") > 0:
         print("access recovery, OK")
     else:
         print("access recovery, NotOK")
