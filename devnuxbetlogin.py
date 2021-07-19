@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions
 import config
 
 browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
+browser.set_window_size(1086, 1020)
 current_date = date.today()
 date = current_date.strftime("%d,%m,%Y")
 screenshot_path = config.SCREENSHOTPATHAUTH
@@ -26,7 +27,6 @@ def wait_for_element(xpath):
 
 def open_main_page():
     browser.get(config.SITE)
-    browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
 
 
@@ -66,8 +66,7 @@ def login_positive_flow():
     try:
         uname = browser.find_element_by_xpath("//div[2]/div[3]")
         if uname.text == config.AUTH_NAME_EXIST:
-            print("authorisation, OK")
-            print("main page return, OK")
+            print("authorisation, OK\n main page return, OK")
             browser.save_screenshot(f"{screenshot_path}UserLogedInDevNuxbet.png")
         else:
             print(f"NOK, uname: {uname.text}")
@@ -100,20 +99,20 @@ def login_negative_flow():
     login_button = browser.find_element_by_xpath("//form/div[2]/button")
     login_button.click()
     sleep(1)  # слип нужен чтоб форма обновилась
-    if str(login_mail.get_attribute("class")) == "inputError":
+    if login_mail.get_attribute("class") == "inputError":
         browser.save_screenshot(f"{screenshot_path}NoEtMailLoginDevNuxbet.png")
         print("mail without et, OK")
     else:
         print("mail without et, NotOK")
-    if str(browser.find_element_by_xpath("//div[1]/div[4]/input").get_attribute("class")) == "inputError":
+    if browser.find_element_by_xpath("//div[1]/div[4]/input").get_attribute("class") == "inputError":
         print("no password, OK")
     else:
         print("no password, NotOK")
-    if str(browser.page_source).find("Enter valid email address") > 0:
+    if browser.page_source.find("Enter valid email address") > 0:
         print("mail error message, OK")
     else:
         print("mail error message, NotOK")
-    if str(browser.page_source).find("This field is required") > 0:
+    if browser.page_source.find("This field is required") > 0:
         print("empty field message, OK")
     else:
         print("empty field message, NotOK")
@@ -123,7 +122,7 @@ def login_negative_flow():
     login_button = browser.find_element_by_xpath("//form/div[2]/button")
     login_button.click()
     sleep(1)  # слип нужен чтоб форма обновилась
-    if str(login_mail.get_attribute("class")) != "inputError":
+    if login_mail.get_attribute("class") != "inputError":
         browser.save_screenshot(f"{screenshot_path}NoMailDevNuxbet.png")
         print("valid mail, OK")
     else:
@@ -137,7 +136,7 @@ def login_negative_flow():
     password.send_keys("password")
     login_button.click()
     sleep(1)  # слип нужен чтоб форма обновилась
-    if str(browser.page_source).find("Incorrect login or password. Please check again."):
+    if browser.page_source.find("Incorrect login or password. Please check again."):
         browser.save_screenshot(f"{screenshot_path}WrongPasswordLoginPasswordDevNuxbet.png")
         print("invalid password message, OK")
     else:

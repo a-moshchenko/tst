@@ -13,8 +13,8 @@ print("Перед запуском, по возможности, отключи�
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--incognito")
-
 browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
+browser.set_window_size(1086, 1020)
 current_date = date.today()
 data = current_date.strftime("%d,%m,%Y")
 screenshot_path = config.SCREENSHOTPATHAUTH
@@ -61,7 +61,6 @@ def authorisation_form_open():
 
 def open_main_page():
     browser.get(config.SFRONT1SITE)
-    browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
     browser.refresh()
     sleep(2)
@@ -77,7 +76,7 @@ def open_admin_socialite():
     browser.set_window_size(1086, 1020)
     sleep(2)
     browser.find_element_by_xpath("//input[@type='email']").send_keys("admin_test@nuxbet.com")
-    browser.find_element_by_xpath("//input[@type='password']").send_keys("secretZ1")
+    browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
     browser.find_element_by_xpath("//button[@type='submit']").click()
     sleep(1)
     browser.find_element_by_xpath("/html/body/div[1]/aside/section/ul/li[9]/a").click()
@@ -172,7 +171,7 @@ def social_networks_turn_off():
             print(f"{i} off, NotOK")
         except Exception:  # ексепшн является позитив флоу, поэтому не описан
             print(f"{i} off, OK")
-    browser.save_screenshot(str(f"{current_date}SocNetwOFFSFront1Nuxbet.png"))
+    browser.save_screenshot(f"{current_date}SocNetwOFFSFront1Nuxbet.png")
     return social_networks_ui_current_statement
 
 
@@ -200,10 +199,10 @@ def social_networks_log_in():
         if i != "vkontakte":
             browser.find_element_by_xpath(f"//img[@alt='{i}']").click()
             sleep(2)
-            if str(browser.page_source).find("Some problems with captcha") > 0:
+            if browser.page_source.find("Some problems with captcha") > 0:
                 print(f"{i} follow, Capcha")
             else:
-                if str(browser.current_url) != "https://sfront1.nuxbet.com/":
+                if browser.current_url != "https://sfront1.nuxbet.com/":
                     print(f"{i} follow, OK")
                 else:
                     print(f"{i} follow, NotOK")
@@ -235,12 +234,12 @@ def gmail_login():
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/div[6]/div/a[2]/img"
                                   ).click()
     sleep(2)
-    if str(browser.current_url) != "https://sfront1.nuxbet.com/":
-        if str(browser.page_source).find("nuxbetchk@gmail.com") > 0:
+    if browser.current_url != "https://sfront1.nuxbet.com/":
+        if browser.page_source.find("nuxbetchk@gmail.com") > 0:
             browser.find_element_by_xpath("//div/ul/li[1]/div").click()
             browser.find_element_by_xpath(
                 "/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/"
-                "div/div[2]/div[1]/div/div/div/div/div[1]/div/div[1]/input").send_keys("secretZ1")
+                "div/div[2]/div[1]/div/div/div/div/div[1]/div/div[1]/input").send_keys(config.PASSWORD)
             browser.find_element_by_xpath(
                 "/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button/"
                 "span").click()
@@ -255,12 +254,12 @@ def gmail_login():
                 "/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/"
                 "div[1]/div/div[1]/div/div[1]/input").send_keys(Keys.ENTER)
             sleep(1)  # нужно чтоб форма гугла обновилась
-            browser.find_element_by_xpath("//*[@id='password']/div[1]/div/div[1]/input").send_keys("secretZ1")
+            browser.find_element_by_xpath("//*[@id='password']/div[1]/div/div[1]/input").send_keys(config.PASSWORD)
             sleep(1)
             browser.find_element_by_xpath("//*[@id='password']/div[1]/div/div[1]/input").send_keys(Keys.ENTER)
     wait_for_element(main_page_checkpoint)
     sleep(3)
-    if str(browser.page_source).find("109693494692241829544") > 0:
+    if browser.page_source.find("109693494692241829544") > 0:
         print("google login, OK")
     else:
         print("google login, NotOK")

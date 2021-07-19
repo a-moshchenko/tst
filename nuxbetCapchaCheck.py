@@ -7,10 +7,12 @@ from selenium.webdriver.support import expected_conditions
 import config
 
 browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
+browser.set_window_size(1086, 1020)
 current_date = date.today()
 data = current_date.strftime("%d,%m,%Y")
 screenshot_path = config.SCREENSHOTPATHAUTH
 main_page_checkpoint = "/html/body/div/div[2]/div/section[4]/header"
+
 
 
 def wait_for_element(xpath):
@@ -25,13 +27,12 @@ def wait_for_element(xpath):
 
 def open_main_page():
     browser.get(config.SITE)
-    browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
 
 
 def login_opn():
-    login_btn_main = browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/button")
-    login_btn_main.click()
+    login_button_main = browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/button")
+    login_button_main.click()
 
 
 def general_run():

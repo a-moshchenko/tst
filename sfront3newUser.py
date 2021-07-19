@@ -10,8 +10,8 @@ import config
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--incognito")
-
 browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
+browser.set_window_size(1086, 1020)
 current_date = date.today()
 date = current_date.strftime("%d,%m,%Y")
 screenshot_path = config.SCREENSHOTPATHAUTH
@@ -40,7 +40,6 @@ def wait_for_element(xpath):
 
 def open_main_page():
     browser.get(config.SFRONT3SITE)
-    browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
     sleep(1)
 
@@ -93,7 +92,7 @@ def empty_fields_check():
         print("no T&C confirmation field warning, OK")
     else:
         print("no T&C confirmation field warning, NotOK")
-    if str(browser.page_source).count("This field is required") == 5:
+    if browser.page_source.count("This field is required") == 5:
         print("empty fields warning messages, OK")
     else:
         print("empty fields warning messages, OK")
@@ -164,7 +163,7 @@ def invalid_email_check():
     browser.find_element_by_xpath("(//input[@type='text'])[4]").send_keys(config.AUTHNAME)
     browser.find_element_by_css_selector(".btnWrap > .mainBtn").click()
     sleep(1)  # нужно чтоб форма обновилась
-    if str(browser.page_source).find("Username/Email already exist") > 0:
+    if browser.page_source.find("Username/Email already exist") > 0:
         print("exsisting user registration, OK")
     else:
         print("exsisting user registration, NotOK")
@@ -177,7 +176,7 @@ def invalid_email_check():
     browser.find_element_by_xpath("(//input[@type='text'])[4]").send_keys(Keys.DELETE)
     browser.find_element_by_xpath("(//input[@type='text'])[4]").send_keys("почта@домен.сру")
     browser.find_element_by_css_selector(".btnWrap > .mainBtn").click()
-    if str(browser.page_source).find("Enter valid email address") > 0:
+    if browser.page_source.find("Enter valid email address") > 0:
         print("cyrylic email warning, OK")
     else:
         print("cyrylic email warning, NotOK")
@@ -190,7 +189,7 @@ def invalid_email_check():
     browser.find_element_by_xpath("(//input[@type='text'])[4]").send_keys(Keys.DELETE)
     browser.find_element_by_xpath("(//input[@type='text'])[4]").send_keys(config.AUTHSHORTNAME)
     browser.find_element_by_css_selector(".btnWrap > .mainBtn").click()
-    if str(browser.page_source).find("Enter valid email address") > 0:
+    if browser.page_source.find("Enter valid email address") > 0:
         print("no et email warning, OK")
     else:
         print("no et email warning, NotOK")
@@ -201,7 +200,7 @@ def invalid_email_check():
     fill_all_fields()
     browser.find_element_by_xpath("(//input[@type='text'])[8]").send_keys(Keys.BACKSPACE)
     browser.save_screenshot(f"{screenshot_path}IncorrectPasswordConfirmationSFront3Nuxbet.png")
-    if str(browser.find_element_by_xpath("(//input[@type='text'])[9]").get_attribute("class")) == "inputError":
+    if browser.find_element_by_xpath("(//input[@type='text'])[9]").get_attribute("class") == "inputError":
         print("wrong password confirmation field warning, OK")
     else:
         print("wrong password confirmation field warning, NotOK")
@@ -228,6 +227,14 @@ def log_out():
     wait_for_element("/html/body/div/div[2]/div/section[2]/div")
 
 
+def data_to_database_transfer_check(element_xpath, element_name):
+    if str(browser.find_element_by_xpath(element_xpath).get_attribute("value")) == \
+            str(user_registration_info[element_name]):
+        print(f"{element_name} to DB, OK")
+    else:
+        print(f"{element_name} to DB, NotOK")
+
+
 def login_via_google():
     open_registration_form()
     browser.find_element_by_xpath("//img[@alt='google']").click()
@@ -243,33 +250,33 @@ def login_via_google():
     wait_for_element(main_page_checkpoint)
     sleep(3)
     browser.save_screenshot(f"{screenshot_path}RegistratedViaGoogleSFront3Nuxbet.png")
-    if str(browser.page_source).find("nuxbetchk") > 0:
+    if browser.page_source.find("nuxbetchk") > 0:
         print("google login, OK")
     else:
         print("google login, NotOK")
 
 
-def registration_positive_flow():
+def registration_positive_flow(user_data):
     fill_all_fields()
     username = str(browser.find_element_by_xpath("(//input[@type='text'])[4]").get_attribute("value"))[:-9]
     print(f"""Username: {username}\nPassword: {config.PASSWORD}\nPhone: {browser.find_element_by_xpath(
         "//input[@type='tel']").get_attribute("value")}""")
-    global user_registration_info
-    user_registration_data(user_registration_info)
+    user_registration_data(user_data)
     browser.find_element_by_xpath("//button[@class='mainBtn']").click()
     wait_for_element("/html/body/div/div[2]/div/section[2]/div")
     sleep(2)
-    if str(browser.current_url) == str(config.SFRONT3SITE):
+    if str(browser.current_url) == config.SFRONT3SITE:
         print("to main page after registration, OK")
     else:
         print("to main page after registration, NotOK")
-    if str(browser.page_source).find(username) > 0:
+    if browser.page_source.find(username) > 0:
         print("user registered, OK")
     else:
         print("user registered, NotOK")
     browser.save_screenshot(f"{screenshot_path}RegistrationFinishedSFront3Nuxbet.png")
     log_out()
     login_via_google()
+    return user_data
 
 
 def user_registration_data(user_data):
@@ -311,52 +318,20 @@ def admin_userdata_check():
     sleep(1)
     browser.find_element_by_css_selector("svg").click()
     browser.find_element_by_css_selector("div:nth-child(1) > ul > li:nth-child(1) > a").click()
-    if str(browser.find_element_by_xpath("//input[@id='InputEmail']").get_attribute("value")) == \
-            str(user_registration_info["email"]):
-        print("email to DB, OK")
-    else:
-        print("email to DB, NotOK")
-    if str(browser.find_element_by_xpath("//input[@id='InputUserName']").get_attribute("value")) == str(
-            user_registration_info["username"]):
-        print("username to DB, OK")
-    else:
-        print("username to DB, NotOK")
-    if str(browser.find_element_by_xpath("//input[@id='InputPhone']").get_attribute("value")) == str(
-            user_registration_info["mobile"]):
-        print("phone to DB, OK")
-    else:
-        print("phone to DB, NotOK")
-    if str(browser.find_element_by_xpath("//select[@id='currency']").get_attribute("value")) == str(
-            user_registration_info["currency"]):
-        print("currency to DB, OK")
-    else:
-        print("currency to DB, NotOK")
-    if str(browser.find_element_by_xpath("//input[@name='country_id']").get_attribute("value")) == str(
-            user_registration_info["country"]):
-        print("country to DB, OK")
-    else:
-        print("country to DB, NotOK")
-    if str(browser.find_element_by_xpath("//input[@name='city']").get_attribute("value")) == str(
-            user_registration_info["city"]):
-        print("city to DB, OK")
-    else:
-        print("city to DB, NotOK")
-    if str(browser.find_element_by_xpath("//input[@name='street']").get_attribute("value")) == str(
-            user_registration_info["adress"]):
-        print("adress to DB, OK")
-    else:
-        print("adress to DB, NotOK")
-    if str(browser.find_element_by_xpath("//input[@name='ref_code']").get_attribute("value")) == str(
-            user_registration_info["refer_code"]):
-        print("ref code to DB, OK")
-    else:
-        print("ref code to DB, NotOK")
+    data_to_database_transfer_check("//input[@id='InputEmail']", "email")
+    data_to_database_transfer_check("//input[@id='InputUserName']", "username")
+    data_to_database_transfer_check("//input[@id='InputPhone']", "mobile")
+    data_to_database_transfer_check("//select[@id='currency']", "currency")
+    data_to_database_transfer_check("//input[@name='country_id']", "country")
+    data_to_database_transfer_check("//input[@name='city']", "city")
+    data_to_database_transfer_check("//input[@name='street']", "adress")
+    data_to_database_transfer_check("//input[@name='ref_code']", "refer_code")
 
 
 open_main_page()
 open_registration_form()
 to_login_form_and_back()
 registration_negative_flow()
-registration_positive_flow()
+registration_positive_flow(user_registration_info)
 admin_userdata_check()
 browser.close()

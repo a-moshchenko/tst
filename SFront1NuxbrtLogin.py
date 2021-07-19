@@ -11,6 +11,7 @@ chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--incognito")
 
 browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
+browser.set_window_size(1086, 1020)
 current_date = date.today()
 date = current_date.strftime("%d,%m,%Y")
 screenshot_path = config.SCREENSHOTPATHAUTH
@@ -30,7 +31,6 @@ def wait_for_element(xpath):
 
 def open_main_page():
     browser.get(config.SFRONT1SITE)
-    browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
     browser.refresh()
     sleep(2)
@@ -57,7 +57,7 @@ def login_via_mail():
     login_button = browser.find_element_by_css_selector(".btnWrap > .mainBtn")
     login_button.click()
     wait_for_element(main_page_checkpoint)
-    if str(browser.page_source).find(config.AUTHSHORTNAME):
+    if browser.page_source.find(config.AUTHSHORTNAME):
         print(f"login, OK\ngoto main page, OK")
         browser.save_screenshot(f"{screenshot_path}LoginViaUsernameSuccessSFront1Nuxbet.png")
     else:
@@ -101,15 +101,15 @@ def login_negative_flow():
         # проверка пустых полей
         login_button = browser.find_element_by_css_selector(".btnWrap > .mainBtn")
         login_button.click()
-        if str(browser.find_element_by_xpath("//input[@type='text']").get_attribute("class")) == "inputError":
+        if browser.find_element_by_xpath("//input[@type='text']").get_attribute("class") == "inputError":
             print("no username error, OK")
         else:
             print("no username error, OK")
-        if str(browser.find_element_by_xpath("//input[@type='password']").get_attribute("class")) == "inputError":
+        if browser.find_element_by_xpath("//input[@type='password']").get_attribute("class") == "inputError":
             print("no password error, OK")
         else:
             print("no password error, OK")
-        if str(browser.page_source).count("shortText.field_required") == 2:
+        if browser.page_source.count("shortText.field_required") == 2:
             print("empty fields warning, OK")
             browser.save_screenshot(f"{screenshot_path}emptyFieldsWarningSFront1Nuxbet.png")
         else:
@@ -122,8 +122,8 @@ def login_negative_flow():
         browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
         login_button = browser.find_element_by_css_selector(".btnWrap > .mainBtn")
         login_button.click()
-        if str(browser.find_element_by_xpath("//input[@type='text']").get_attribute("class")) == "inputError" and \
-                str(browser.find_element_by_xpath("//input[@type='password']").get_attribute("class")) != "inputError":
+        if browser.find_element_by_xpath("//input[@type='text']").get_attribute("class") == "inputError" and \
+                browser.find_element_by_xpath("//input[@type='password']").get_attribute("class") != "inputError":
             print("empty username error, OK")
             browser.save_screenshot(f"{screenshot_path}emptyUsernameWarningSFront1Nuxbet.png")
         else:
@@ -136,8 +136,8 @@ def login_negative_flow():
         browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHSHORTNAME)
         login_button = browser.find_element_by_css_selector(".btnWrap > .mainBtn")
         login_button.click()
-        if str(browser.find_element_by_xpath("//input[@type='text']").get_attribute("class")) != "inputError" and \
-                str(browser.find_element_by_xpath("//input[@type='password']").get_attribute("class")) == "inputError":
+        if browser.find_element_by_xpath("//input[@type='text']").get_attribute("class") != "inputError" and \
+                browser.find_element_by_xpath("//input[@type='password']").get_attribute("class") == "inputError":
             print("empty password error, OK")
             browser.save_screenshot(f"{screenshot_path}emptyPasswordWarningSFront1Nuxbet.png")
         else:
@@ -151,8 +151,8 @@ def login_negative_flow():
         browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
         login_button = browser.find_element_by_css_selector(".btnWrap > .mainBtn")
         login_button.click()
-        if str(browser.find_element_by_xpath("//input[@type='text']").get_attribute("class")) == "inputError" and \
-                str(browser.find_element_by_xpath("//input[@type='password']").get_attribute("class")) != "inputError":
+        if browser.find_element_by_xpath("//input[@type='text']").get_attribute("class") == "inputError" and \
+                browser.find_element_by_xpath("//input[@type='password']").get_attribute("class") != "inputError":
             print("invalid username error, OK")
             browser.save_screenshot(f"{screenshot_path}emptyUsermameWarningSFront1Nuxbet.png")
         else:
@@ -171,7 +171,7 @@ def login_negative_flow():
         login_button = browser.find_element_by_css_selector(".btnWrap > .mainBtn")
         login_button.click()
         sleep(2)  # форма обновляется
-        if str(browser.page_source).find("Incorrect login or password. Please check again.") > 0:
+        if browser.page_source.find("Incorrect login or password. Please check again.") > 0:
             print("incorrect authorisation data error massage, OK")
             browser.save_screenshot(f"{screenshot_path}incorrectUserDataErrorMessageSFront1Nuxbet.png")
         else:
@@ -191,7 +191,7 @@ def forgot_password():
     browser.find_element_by_xpath("//form/div/div[2]/div[2]").click()
     sleep(1)  # нужно чтоб форма обновилась
     browser.find_element_by_css_selector(".btnWrap > .mainBtn").click()
-    if str(browser.find_element_by_xpath("//input[@type='text']").get_attribute("class")) == "inputError":
+    if browser.find_element_by_xpath("//input[@type='text']").get_attribute("class") == "inputError":
         print("empty password recovery, OK")
         browser.save_screenshot(f"{screenshot_path}emptyPasswordRecoverySFront1Nuxbet.png")
     else:
@@ -201,7 +201,7 @@ def forgot_password():
     browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHSHORTNAME)
     browser.find_element_by_css_selector(".btnWrap > .mainBtn").click()
     sleep(1)
-    if str(browser.page_source).find("shortText.your_password_recovered") > 0:
+    if browser.page_source.find("shortText.your_password_recovered") > 0:
         print("password recovery, OK")
         browser.save_screenshot(f"{screenshot_path}FinishPasswordRecoverySFront1Nuxbet.png")
     else:
@@ -241,7 +241,7 @@ def ticket_create():
     browser.save_screenshot(f"{screenshot_path}CreateTicketSFront1Nuxbet.png")
     browser.find_element_by_css_selector(".mainBtn:nth-child(1)").click()
     sleep(1)
-    if str(browser.page_source).find("Thanks in advance for your patience!") > 0:
+    if browser.page_source.find("Thanks in advance for your patience!") > 0:
         print("ticket created, OK")
         browser.save_screenshot(f"{screenshot_path}TicketCreatedSFront1Nuxbet.png")
     else:
@@ -266,7 +266,7 @@ def login_via_google():
     browser.find_element_by_xpath("//*[@id='password']/div[1]/div/div[1]/input").send_keys(Keys.ENTER)
     wait_for_element(main_page_checkpoint)
     sleep(3)
-    if str(browser.page_source).find("109693494692241829544") > 0:
+    if browser.page_source.find("109693494692241829544") > 0:
         print("google login, OK")
     else:
         print("google login, NotOK")

@@ -10,6 +10,7 @@ import config
 current_date = date.today()
 data = current_date.strftime("%d,%m,%Y")
 browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
+browser.set_window_size(1086, 1020)
 screenshot_path = config.SCREENSHOTPATHAUTH
 print("check, result")
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
@@ -28,7 +29,6 @@ def wait_for_element(xpath):
 
 def open_main_paga():
     browser.get(config.SITE)
-    browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
 
 
@@ -40,6 +40,13 @@ def register_open():
     wait_for_element(registration_form_checkpoint)
     browser.refresh()
     wait_for_element(registration_form_checkpoint)
+
+
+def warning_check(element_xpath, element_name):
+    if browser.find_element_by_xpath(element_xpath).get_attribute("class") == "inputError":
+        print(f"requiring {element_name} alert, OK")
+    else:
+        print(f"requiring {element_name} alert, NotOK")
 
 
 def password_confirmation_error():
@@ -73,12 +80,8 @@ def invalid_email_error():
     registration_button = browser.find_element_by_xpath(
         "/html/body/div/div[2]/div/section/div/form/div/div/div[8]/button")
     registration_button.click()
-    if email_field.get_attribute("class") == "inputError":
-        browser.save_screenshot(f"{screenshot_path}NoEtMailDevNuxbet.png")
-        print("no at mail, OK")
-    else:
-        print("no at mail, NotOK")
-    if str(browser.page_source).find("Enter valid email address") > 0:
+    warning_check("/html/body/div/div[2]/div/section/div/form/div/div/div[8]/button", "main button")
+    if browser.page_source.find("Enter valid email address") > 0:
         print("e-mail errMsg, OK")
     else:
         print("e-mail errMsg, NotOK")
@@ -107,7 +110,7 @@ def invalid_email_error():
     email_field = browser.find_element_by_xpath("//form/div/div/input")
     email_field.click()
     email_field.send_keys("почта@домен.сру")
-    browser.find_element_by_xpath("//input[2]").send_keys("autotestuser1672@mail.com")  # вводим имя пользователя
+    browser.find_element_by_xpath("//input[2]").send_keys(config.AUTHNAME)  # вводим имя пользователя
     browser.find_element_by_xpath("//div[4]/input").send_keys(config.PASSWORD)  # вводим пароль
     browser.find_element_by_xpath("//div[6]/input").send_keys(config.PASSWORD)  # подтверждаем пароль
     browser.execute_script("arguments[0].click();", (browser.find_element_by_xpath(
@@ -143,10 +146,10 @@ def invalid_email_error():
     register_open()
     email_field = browser.find_element_by_xpath("//form/div/div/input")
     email_field.click()
-    email_field.send_keys("autotestuser1672@mail.com")
-    browser.find_element_by_xpath("//input[2]").send_keys("autotestuser1672@mail.com")  # вводим имя пользователя
-    browser.find_element_by_xpath("//div[4]/input").send_keys("secretZ1")  # вводим пароль
-    browser.find_element_by_xpath("//div[6]/input").send_keys("secretZ1")  # подтверждаем пароль
+    email_field.send_keys(config.AUTHNAME)
+    browser.find_element_by_xpath("//input[2]").send_keys(config.AUTHNAME)  # вводим имя пользователя
+    browser.find_element_by_xpath("//div[4]/input").send_keys(config.PASSWORD)  # вводим пароль
+    browser.find_element_by_xpath("//div[6]/input").send_keys(config.PASSWORD)  # подтверждаем пароль
     browser.execute_script("arguments[0].click();", (browser.find_element_by_xpath(
         "/html/body/div/div[2]/div/section/div/form/div/div/input[4]")))  # соглашаемся с T&C
     registration_button = browser.find_element_by_xpath(
@@ -168,33 +171,12 @@ def reqested_fields_empty():
         "/html/body/div/div[2]/div/section/div/form/div/div/div[8]/button"
     ).click()  # нажимаем "зарегистрироваться" в форме регистрации
     sleep(1)  # нужен чтоб форма успела обновиться
-    mail_field = browser.find_element_by_xpath("//form/div/div/input")
-    # print(mail_field.get_attribute("class"))  # разкомментить если нужно дебажить
-    if mail_field.get_attribute("class") == "inputError":  # проверяем наличие ворнинга в поле имейла
-        print("requiring mail alert, OK")
-    else:
-        print("requiring mail alert, NotOK")
-    if str(browser.find_element_by_xpath("//input[2]").get_attribute(
-            "class")) == "inputError":  # проверяем наличие ворнинга в поле имени пользователя
-        print("requiring name alert, OK")
-    else:
-        print("requiring name alert, NotOK")
-    if str(browser.find_element_by_xpath("//div[7]/input").get_attribute(
-            "class")) == "inputError":  # проверяем наличие ворнинга в поле пароля
-        print("requiring password alert, OK")
-    else:
-        print("requiring password alert, NotOK")
-    if str(browser.find_element_by_xpath("//div[9]/input").get_attribute(
-            "class")) == "inputError":  # проверяем наличие ворнинга в поле подтверждения пароля
-        print("requiring password confirmation alert, OK")
-    else:
-        print("requiring password confirmation alert, NotOK")
-    if str(browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div/div/label").get_attribute(
-            "class")) == "inputError":  # проверяем наличие ворнинга в боксе T&C
-        browser.save_screenshot(f"{screenshot_path}EmptyFieldsDevNuxbet.png")
-        print("required T&C alert, OK")
-    else:
-        print("required T&C alert, NotOK")
+    warning_check("//form/div/div/input", "mail")
+    warning_check("//input[2]", "name")  # проверяем наличие ворнинга в поле имени пользователя
+    warning_check("//div[7]/input", "password")  # проверяем наличие ворнинга в поле пароля
+    warning_check("//div[9]/input", "password confirmation")  # проверяем наличие ворнинга в поле подтверждения пароля
+    warning_check("/html/body/div/div[2]/div/section/div/form/div/div/label", "T&C")
+    browser.save_screenshot(f"{screenshot_path}EmptyFieldsDevNuxbet.png")
 
 
 def login_through_auth():

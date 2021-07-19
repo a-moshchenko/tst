@@ -9,6 +9,7 @@ import config
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--incognito")
 browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
+browser.set_window_size(1086, 1020)
 current_date = date.today()
 data = current_date.strftime("%d,%m,%Y")
 screenshot_path = config.SCREENSHOTPATHAUTH
@@ -28,7 +29,6 @@ def wait_for_element(xpath):
 
 def open_main_page():
     browser.get("https://nuxbet.com/")
-    browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
 
 
@@ -69,8 +69,7 @@ def login_positive_flow():
         uname = browser.find_element_by_xpath("//span[@class='userName ellipsis']")
         if uname.text == config.AUTH_NAME_EXIST:
             browser.save_screenshot(str(current_date) + "LogedInNuxbet.png")
-            print("auth, OK")
-            print("main page return, OK")
+            print("auth, OK\nmain page return, OK")
         else:
             print("NOK, uname: ", uname.text)
     except Exception as e:
@@ -107,19 +106,19 @@ def login_negative_flow():
     login_button = browser.find_element_by_xpath("//button[@class='mainBtn']")
     login_button.click()
     sleep(1)  # слип нужен чтоб форма обновилась
-    if str(login_mail.get_attribute("class")) == "inputError":
+    if login_mail.get_attribute("class") == "inputError":
         print("mail !@, OK")
     else:
         print("mail !@, NotOK")
-    if str(browser.find_element_by_xpath("//input[@type='password']").get_attribute("class")) == "inputError":
+    if browser.find_element_by_xpath("//input[@type='password']").get_attribute("class") == "inputError":
         print("no password, OK")
     else:
         print("no password, NotOK")
-    if str(browser.page_source).find("Enter valid email address") > 0:
+    if browser.page_source.find("Enter valid email address") > 0:
         print("mail error messaage, OK")
     else:
         print("mail error messaage, OK")
-    if str(browser.page_source).find("This field is required") > 0:
+    if browser.page_source.find("This field is required") > 0:
         browser.save_screenshot(str(current_date) + "NoEtMailNoPasswordNuxbet.png")
         print("empty field message, OK")
     else:
@@ -131,7 +130,7 @@ def login_negative_flow():
     login_button = browser.find_element_by_css_selector(".btnWrap > .mainBtn")
     login_button.click()
     sleep(1)  # слип нужен чтоб форма обновилась
-    if str(login_mail.get_attribute("class")) != "inputError":
+    if login_mail.get_attribute("class") != "inputError":
         browser.save_screenshot(f"{current_date}NoPasswordNuxbet.png")
         print("valid mail, OK")
     else:
@@ -145,7 +144,7 @@ def login_negative_flow():
     password.send_keys("password")
     login_button.click()
     sleep(1)  # слип нужен чтоб форма обновилась
-    if str(browser.page_source).find("Incorrect login or password. Please check again."):
+    if browser.page_source.find("Incorrect login or password. Please check again."):
         browser.save_screenshot(str(current_date) + "WrongPasswordNuxbet.png")
         print("invalid password message, OK")
     else:

@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions
 import config
 
 browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
+browser.set_window_size(1086, 1020)
 current_date = date.today()
 date = current_date.strftime("%d,%m,%Y")
 screenshot_path = config.SCREENSHOTPATHAUTH
@@ -27,7 +28,6 @@ def wait_for_element(xpath):
 
 def open_main_page():
     browser.get(config.SITE)
-    browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
 
 
@@ -57,7 +57,7 @@ def login():
         print("no email, NotOK")
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/div[2]/span[2]").click()
     wait_for_element(login_button_checkpoint)
-    if str(browser.current_url) == "https://dev.nuxbet.com/tickets/create":
+    if browser.current_url == "https://dev.nuxbet.com/tickets/create":
         browser.save_screenshot(f"{screenshot_path}ContactUsDewNuxbet.png")
         print("contact us, OK")
     else:
@@ -71,7 +71,7 @@ def login():
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/input"
                                   ).send_keys("invalidmail@mail.com")
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div[2]/button").click()
-    if str(browser.page_source).find("We have sent a verification code to your email.") > 0:
+    if browser.page_source.find("We have sent a verification code to your email.") > 0:
         browser.save_screenshot(f"{screenshot_path}SecurityCodeDewNuxbet.png")
         print("security code sent, OK")
     else:
@@ -95,7 +95,7 @@ def login():
     sleep(1)
     browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div[6]/button[1]").click()
     sleep(2)  # ожидание не всегда корректно отрабатывает. тут надежнее слип
-    if str(browser.page_source).find("Thanks in advance for your patience!") > 0:
+    if browser.page_source.find("Thanks in advance for your patience!") > 0:
         browser.save_screenshot(f"{screenshot_path}TicketCreatedDewNuxbet.png")
         print("ticket, OK")
     else:
@@ -110,7 +110,7 @@ def login():
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/input").send_keys("invalidmail")
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div[2]/button").click()
     sleep(1)  # ждем пока форма обновится
-    if str(browser.page_source).find("Your password cannot be recovered, contact support.") > 0:
+    if browser.page_source.find("Your password cannot be recovered, contact support.") > 0:
         browser.save_screenshot(f"{screenshot_path}TicketNotCreatedDewNuxbet.png")
         print("invalid mail message, OK")
     else:

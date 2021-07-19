@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions
 import config
 
 browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
+browser.set_window_size(1086, 1020)
 current_date = date.today()
 date = current_date.strftime("%d,%m,%Y")
 screenshot_path = config.SCREENSHOTPATHAUTH
@@ -14,7 +15,6 @@ screenshot_path = config.SCREENSHOTPATHAUTH
 
 def open_main_page():
     browser.get("https://nuxbet.com/")
-    browser.set_window_size(1086, 1020)
     try:
         WebDriverWait(browser, 10).until(
             expected_conditions.presence_of_element_located((By.XPATH, "/html/body/div/div[2]/div/section[2]/div"))
@@ -25,8 +25,8 @@ def open_main_page():
 
 
 def login_form_open():
-    login_btn_main = browser.find_element_by_class_name("regBtn")
-    login_btn_main.click()
+    login_button_main = browser.find_element_by_class_name("regBtn")
+    login_button_main.click()
 
 
 def general_run():

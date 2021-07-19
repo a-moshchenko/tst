@@ -12,6 +12,7 @@ chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--incognito")
 
 browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
+browser.set_window_size(1086, 1020)
 current_date = date.today()
 date = current_date.strftime("%d,%m,%Y")
 screenshot_path = config.SCREENSHOTPATHAUTH
@@ -31,7 +32,6 @@ def wait_for_element(xpath):
 
 def open_main_page():
     browser.get(config.SFRONT3SITE)
-    browser.set_window_size(1086, 1020)
     wait_for_element(main_page_checkpoint)
     sleep(1)
 
@@ -43,19 +43,20 @@ def open_login_form():
     wait_for_element(registration_form_checkpoint)
 
 
+def warning_check(element_xpath, element_name):
+    if browser.find_element_by_xpath(element_xpath).get_attribute("class") == "inputError":
+        print(f"no {element_name} warning, OK")
+    else:
+        print(f"no {element_name} warning, NotOK")
+
+
 def login_negative_flow():
     # проверка пустых полей
     browser.find_element_by_xpath("//form/div[2]/button").click()
     sleep(1)
-    if str(browser.find_element_by_xpath("//input[@type='text']").get_attribute("class")) == "inputError":
-        print("no email warning, OK")
-    else:
-        print("no email warning, NotOK")
-    if str(browser.find_element_by_xpath("//input[@type='password']").get_attribute("class")) == "inputError":
-        print("no password warning, OK")
-    else:
-        print("no password warning, NotOK")
-    if str(browser.page_source).count("This field is required") == 2:
+    warning_check("//input[@type='text']", "email")
+    warning_check("//input[@type='password']", "password")
+    if browser.page_source.count("This field is required") == 2:
         print("empty fields warning messages, OK")
     else:
         print("empty fields warning messages, NotOK")
@@ -64,24 +65,18 @@ def login_negative_flow():
     browser.refresh()
     browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHNAME)
     browser.find_element_by_xpath("//input[@type='text']").send_keys(Keys.ENTER)
-    if str(browser.find_element_by_xpath("//input[@type='text']").get_attribute("class")) != "inputError":
+    if browser.find_element_by_xpath("//input[@type='text']".get_attribute("class")) != "inputError":
         print("no email warning, OK")
     else:
         print("no email warning, NotOK")
-    if str(browser.find_element_by_xpath("//input[@type='password']").get_attribute("class")) == "inputError":
-        print("no password warning, OK")
-    else:
-        print("no password warning, NotOK")
+    warning_check("//input[@type='password']", "password")
 
     # проверка пароля без имейла
     browser.refresh()
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
     browser.find_element_by_xpath("//input[@type='text']").send_keys(Keys.ENTER)
-    if str(browser.find_element_by_xpath("//input[@type='text']").get_attribute("class")) == "inputError":
-        print("no email warning, OK")
-    else:
-        print("no email warning, NotOK")
-    if str(browser.find_element_by_xpath("//input[@type='password']").get_attribute("class")) != "inputError":
+    warning_check("//input[@type='text']", "email")
+    if browser.find_element_by_xpath("//input[@type='password']").get_attribute("class") != "inputError":
         print("no password warning, OK")
     else:
         print("no password warning, NotOK")
@@ -98,10 +93,7 @@ def login_negative_flow():
     browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHSHORTNAME)
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
     browser.find_element_by_xpath("//input[@type='text']").send_keys(Keys.ENTER)
-    if str(browser.find_element_by_xpath("//input[@type='text']").get_attribute("class")) == "inputError":
-        print("no email warning, OK")
-    else:
-        print("no email warning, NotOK")
+    warning_check("//input[@type='text']", "email")
 
     # проверка несуществующей почты
     browser.refresh()
@@ -110,9 +102,9 @@ def login_negative_flow():
     browser.find_element_by_xpath("//input[@type='text']").send_keys(Keys.ENTER)
     sleep(1)  # форма в это время обновляется
     if str(browser.page_source).find("Incorrect login or password. Please check again.") > 0:
-        print("incorrect data warning message, OK")
+        print("incorrect input warning message, OK")
     else:
-        print("incorrect data warning message, NotOK")
+        print("incorrect input warning message, NotOK")
 
     # логин по неправильному паролю
     browser.refresh()
@@ -122,9 +114,9 @@ def login_negative_flow():
     browser.find_element_by_xpath("//input[@type='text']").send_keys(Keys.ENTER)
     sleep(1)  # форма в это время обновляется
     if str(browser.page_source).find("Incorrect login or password. Please check again.") > 0:
-        print("incorrect data message, OK")
+        print("incorrect login or password message, OK")
     else:
-        print("incorrect data message, NotOK")
+        print("incorrect login or password message, NotOK")
 
     # логин гуглового пользователя по адресу почты
     browser.refresh()
@@ -161,7 +153,7 @@ def login_positive_flow():
     except Exception as e:
         print(f"log out Error, {e}")
         # browser.close()
-    print("loged out")
+    print("logged out")
     browser.refresh()
 
 
@@ -189,12 +181,12 @@ def forgot_password():
     browser.find_element_by_xpath("//input[@type = 'text']").send_keys(config.AUTHSHORTNAME)
     browser.find_element_by_xpath("//input[@type = 'text']").send_keys(Keys.ENTER)
     sleep(1)
-    if str(browser.page_source).find("Your password cannot be recovered, contact support.") > 0:
+    if browser.page_source.find("Your password cannot be recovered, contact support.") > 0:
         print("access recovery username warning, OK")
         browser.save_screenshot(f"{screenshot_path}UsernamePasswordRecoverySFront3Nuxbet.png")
         browser.find_element_by_xpath("//button[@class='mainBtn']").click()
         sleep(2)
-        if str(browser.current_url) == "https://sfront3.nuxbet.com/tickets/create":
+        if browser.current_url == "https://sfront3.nuxbet.com/tickets/create":
             print("ticket creation form, OK")
             browser.save_screenshot(f"{screenshot_path}ticketCreationFormSFront3Nuxbet.png")
         else:
