@@ -1,7 +1,7 @@
 from pathlib import Path
-from datetime import date
+from datetime import datetime
 
-current_date = date.today().strftime("%Y-%m-%d")
+current_date = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
 # универсальные данные
 EXECUTABLE_PATH = Path.cwd()/'driwers'/'chromedriver.exe'  # Тут указать путь к файлу драйвера браузера
@@ -13,7 +13,7 @@ COEFPAGE = "https://dev.nuxbet.com/pre-match?sport_id="
 COEFPAGEPROD = "https://nuxbet.com/pre-match?sport_id="
 COEFLIVEPAGEPROD = "https://nuxbet.com/live?sport_id="
 COEFLIVEPAGE = "https://dev.nuxbet.com/live?sport_id="
-SCREENSHOTPATH = f"{Path.cwd()}/'screenshots'/'coef'"
+SCREENSHOTPATH = Path.cwd()/'screenshots'/'coef'
 
 # данные для логина и авторизации
 SITE = "https://dev.nuxbet.com/"  # url сайта, на котором будем проводить тест
@@ -26,5 +26,6 @@ DEFAULT_MAIL = "nuxbetchk@gmail.com"
 SFRONT1_SITE = "https://sfront1.nuxbet.com/"
 AUTHORISATION_SHORT_NAME = "autotestuser1672"
 SFRONT3_SITE = "https://sfront3.nuxbet.com/"
-SCREENSHOT_PATH_AUTHORISATION = f"{Path.cwd()}/'screenshots'/{current_date}"
+SCREENSHOT_PATH_AUTHORISATION = Path.cwd()/'screenshots'/f"{current_date}"
+ADMIN_SFRONT3 = "https://sback.nuxbet.com/"
 

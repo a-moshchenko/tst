@@ -39,8 +39,7 @@ def admin_logout():
 
 
 def open_admin_socialite():
-    browser.get("https://sback.nuxbet.com/")
-    browser.set_window_size(1086, 1020)
+    browser.get(config.ADMIN_SFRONT3)
     sleep(2)
     browser.find_element_by_xpath("//input[@type='email']").send_keys("admin_test@nuxbet.com")
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)

@@ -17,7 +17,7 @@ def random_four_digits_number():
     return random_four_digits
 
 
-user_name = "autotestuser" + random_four_digits_number()
+user_name = f"autotestuser{random_four_digits_number()}"
 
 
 def authorisation_form_open():

@@ -187,7 +187,7 @@ def forgot_password():
     sleep(1)  # нужно чтоб форма обновилась
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/div[2]/span[2]").click()
     sleep(1)
-    if str(browser.current_url) == "https://sfront1.nuxbet.com/tickets/create":
+    if browser.current_url == f"{config.SFRONT1_SITE}tickets/create":
         print("goto ticket creation from password recovery, OK")
     else:
         print("goto ticket creation from password recovery, NotOK")
@@ -200,7 +200,7 @@ def forgot_password():
     sleep(1)  # нужно чтоб форма обновилась
     browser.find_element_by_css_selector(".btnWrap > .mainBtn").click()
     sleep(2)  # нужно чтоб форма обновилась
-    if str(browser.current_url) == "https://sfront1.nuxbet.com/tickets/create":
+    if browser.current_url == f"{config.SFRONT1_SITE}tickets/create":
         print("goto ticket creation from password recovery, OK")
     else:
         print("goto ticket creation from password recovery, NotOK")

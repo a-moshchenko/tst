@@ -231,16 +231,16 @@ def login_via_google():
         print("google login, NotOK")
 
 
-def registration_positive_flow(user_data):
+def registration_positive_flow():
     fill_all_fields()
     username = str(browser.find_element_by_xpath("(//input[@type='text'])[4]").get_attribute("value"))[:-9]
     print(f"""Username: {username}\nPassword: {config.PASSWORD}\nPhone: {browser.find_element_by_xpath(
         "//input[@type='tel']").get_attribute("value")}""")
-    user_registration_data(user_data)
+    user_info = get_user_registration_data()
     browser.find_element_by_xpath("//button[@class='mainBtn']").click()
     commonFunctions.wait_for_element("/html/body/div/div[2]/div/section[2]/div")
     sleep(2)
-    if str(browser.current_url) == config.SFRONT3_SITE:
+    if browser.current_url == config.SFRONT3_SITE:
         print("to main page after registration, OK")
     else:
         print("to main page after registration, NotOK")
@@ -251,15 +251,13 @@ def registration_positive_flow(user_data):
     browser.save_screenshot(f"{screenshot_path}RegistrationFinishedSFront3Nuxbet.png")
     log_out()
 #    login_via_google()
-    return user_data
+    return user_info
 
 
-def user_registration_data(user_data):
+def get_user_registration_data(user_data):
     user_data["name"] = str(browser.find_element_by_xpath("(//input[@type='text'])").get_attribute("value"))
-    user_data["second_name"] = str(browser.find_element_by_xpath("(//input[@type='text'])[2]").get_attribute(
-        "value"))
-    user_data["birthdate"] = str(browser.find_element_by_xpath("//input[@name='date']").get_attribute(
-        "value"))
+    user_data["second_name"] = str(browser.find_element_by_xpath("(//input[@type='text'])[2]").get_attribute("value"))
+    user_data["birthdate"] = str(browser.find_element_by_xpath("//input[@name='date']").get_attribute("value"))
     user_data["email"] = str(browser.find_element_by_xpath("(//input[@type='text'])[4]").get_attribute("value"))
     user_data["country"] = str(browser.find_element_by_xpath("//*[@id='vs5__combobox']/div[1]/span"
                                                                    ).get_attribute("innerText"))
@@ -275,8 +273,7 @@ def user_registration_data(user_data):
 
 
 def admin_userdata_check(registration_info):
-    browser.get("https://sback.nuxbet.com/")
-    browser.set_window_size(1100, 1020)
+    browser.get(config.ADMIN_SFRONT3)
     sleep(2)
     browser.find_element_by_xpath("/html/body/div/div/div/form/div[1]/input").send_keys("sf3alexproc1313@gmail.com")
     browser.find_element_by_xpath("/html/body/div/div/div/form/div[1]/div[3]/input").send_keys("enemy1307")
@@ -301,12 +298,11 @@ def admin_userdata_check(registration_info):
 
 
 def general_run():
-    user_registration_info = {}
     commonFunctions.open_page(config.SFRONT3_SITE, main_page_checkpoint)
     open_registration_form()
     to_login_form_and_back()
     registration_negative_flow()
-    registration_positive_flow(user_registration_info)
+    user_registration_info = registration_positive_flow()
     admin_userdata_check(user_registration_info)
 
 

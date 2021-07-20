@@ -141,7 +141,7 @@ def login_through_auth():
     browser.find_element_by_xpath(
         "/html/body/div/div[1]/div[2]/div/div/div/div/div[2]/span[2]").click()
     sleep(1)  # ждем пока форма сменится
-    if str(browser.current_url) == f"{config.SITE}":
+    if browser.current_url == f"{config.SITE}":
         print("goto login, OK")
     else:
         print("goto login, NotOK")
