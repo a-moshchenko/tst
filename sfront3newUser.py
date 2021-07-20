@@ -255,25 +255,22 @@ def registration_positive_flow(user_data):
 
 
 def user_registration_data(user_data):
-    user_data.update({"name": str(browser.find_element_by_xpath("(//input[@type='text'])").get_attribute("value"))})
-    user_data.update({"second_name": str(browser.find_element_by_xpath("(//input[@type='text'])[2]").get_attribute(
-        "value"))})
-    user_data.update({"birthdate": str(browser.find_element_by_xpath("//input[@name='date']").get_attribute(
-        "value"))})
-    user_data.update({"email": str(browser.find_element_by_xpath("(//input[@type='text'])[4]").get_attribute("value"))})
-    user_data.update({"country": str(browser.find_element_by_xpath("//*[@id='vs5__combobox']/div[1]/span"
-                                                                   ).get_attribute("innerText"))})
-    user_data.update({"city": str(browser.find_element_by_xpath("(//input[@type='text'])[5]").get_attribute("value"))})
-    user_data.update({"adress": str(browser.find_element_by_xpath("(//input[@type='text'])[6]").get_attribute(
-        "value"))})
-    user_data.update({"mobile": str(browser.find_element_by_xpath("//*[@id='vs6__combobox']/div[1]/span").get_attribute(
-        "innerText") + "-" + str(browser.find_element_by_xpath("//input[@type='tel']").get_attribute("value")))})
-    user_data.update({"currency": str(browser.find_element_by_xpath("//*[@id='vs7__combobox']/div[1]/span"
-                                                                    ).get_attribute("innerText"))})
-    user_data.update({"username": str(browser.find_element_by_xpath("(//input[@type='text'])[7]").get_attribute(
-        "value"))})
-    user_data.update({"refer_code": str(browser.find_element_by_xpath("(//input[@type='text'])[10]").get_attribute(
-        "value"))})
+    user_data["name"] = str(browser.find_element_by_xpath("(//input[@type='text'])").get_attribute("value"))
+    user_data["second_name"] = str(browser.find_element_by_xpath("(//input[@type='text'])[2]").get_attribute(
+        "value"))
+    user_data["birthdate"] = str(browser.find_element_by_xpath("//input[@name='date']").get_attribute(
+        "value"))
+    user_data["email"] = str(browser.find_element_by_xpath("(//input[@type='text'])[4]").get_attribute("value"))
+    user_data["country"] = str(browser.find_element_by_xpath("//*[@id='vs5__combobox']/div[1]/span"
+                                                                   ).get_attribute("innerText"))
+    user_data["city"] = str(browser.find_element_by_xpath("(//input[@type='text'])[5]").get_attribute("value"))
+    user_data["adress"] = str(browser.find_element_by_xpath("(//input[@type='text'])[6]").get_attribute("value"))
+    user_data["mobile"] = str(browser.find_element_by_xpath("//*[@id='vs6__combobox']/div[1]/span").get_attribute(
+        "innerText") + "-" + str(browser.find_element_by_xpath("//input[@type='tel']").get_attribute("value")))
+    user_data["currency"] = str(browser.find_element_by_xpath("//*[@id='vs7__combobox']/div[1]/span"
+                                                                    ).get_attribute("innerText"))
+    user_data["username"] = str(browser.find_element_by_xpath("(//input[@type='text'])[7]").get_attribute("value"))
+    user_data["refer_code"] = str(browser.find_element_by_xpath("(//input[@type='text'])[10]").get_attribute("value"))
     return user_data
 
 
