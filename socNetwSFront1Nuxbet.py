@@ -178,7 +178,7 @@ def social_networks_log_in(networks_ui_basik_statement):
             if browser.page_source.find("Some problems with captcha") > 0:
                 print(f"{key_of_social_networks_statement_list} follow, Capcha")
             else:
-                if browser.current_url != "https://sfront1.nuxbet.com/":
+                if browser.current_url != config.SFRONT1_SITE:
                     print(f"{key_of_social_networks_statement_list} follow, OK")
                 else:
                     print(f"{key_of_social_networks_statement_list} follow, NotOK")
@@ -210,7 +210,7 @@ def gmail_login():
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/div[6]/div/a[2]/img"
                                   ).click()
     sleep(2)
-    if browser.current_url != "https://sfront1.nuxbet.com/":
+    if browser.current_url != config.SFRONT1_SITE:
         if browser.page_source.find("nuxbetchk@gmail.com") > 0:
             browser.find_element_by_xpath("//div/ul/li[1]/div").click()
             browser.find_element_by_xpath(

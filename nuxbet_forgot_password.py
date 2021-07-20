@@ -37,7 +37,7 @@ def login():
         print("no email, NotOK")
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/div[2]/span[2]").click()
     commonFunctions.wait_for_element(login_button_checkpoint)
-    if browser.current_url == "https://dev.nuxbet.com/tickets/create":
+    if browser.current_url == f"{config.SITE}tickets/create":
         browser.save_screenshot(f"{screenshot_path}ContactUsDewNuxbet.png")
         print("contact us, OK")
     else:

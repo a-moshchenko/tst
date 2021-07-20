@@ -250,26 +250,27 @@ def registration_positive_flow():
         print("user registered, NotOK")
     browser.save_screenshot(f"{screenshot_path}RegistrationFinishedSFront3Nuxbet.png")
     log_out()
-#    login_via_google()
+    #    login_via_google()
     return user_info
 
 
-def get_user_registration_data(user_data):
-    user_data["name"] = str(browser.find_element_by_xpath("(//input[@type='text'])").get_attribute("value"))
-    user_data["second_name"] = str(browser.find_element_by_xpath("(//input[@type='text'])[2]").get_attribute("value"))
-    user_data["birthdate"] = str(browser.find_element_by_xpath("//input[@name='date']").get_attribute("value"))
-    user_data["email"] = str(browser.find_element_by_xpath("(//input[@type='text'])[4]").get_attribute("value"))
-    user_data["country"] = str(browser.find_element_by_xpath("//*[@id='vs5__combobox']/div[1]/span"
-                                                                   ).get_attribute("innerText"))
-    user_data["city"] = str(browser.find_element_by_xpath("(//input[@type='text'])[5]").get_attribute("value"))
-    user_data["adress"] = str(browser.find_element_by_xpath("(//input[@type='text'])[6]").get_attribute("value"))
-    user_data["mobile"] = str(browser.find_element_by_xpath("//*[@id='vs6__combobox']/div[1]/span").get_attribute(
-        "innerText") + "-" + str(browser.find_element_by_xpath("//input[@type='tel']").get_attribute("value")))
-    user_data["currency"] = str(browser.find_element_by_xpath("//*[@id='vs7__combobox']/div[1]/span"
-                                                                    ).get_attribute("innerText"))
-    user_data["username"] = str(browser.find_element_by_xpath("(//input[@type='text'])[7]").get_attribute("value"))
-    user_data["refer_code"] = str(browser.find_element_by_xpath("(//input[@type='text'])[10]").get_attribute("value"))
-    return user_data
+def add_data_item(element_xpath, element_attribute):
+    return str(browser.find_element_by_xpath(element_xpath).get_attribute(element_attribute))
+
+
+def get_user_registration_data():
+    return {"name": add_data_item("(//input[@type='text'])", "value"),
+            "second_name": add_data_item("(//input[@type='text'])[2]", "value"),
+            "birthdate": add_data_item("//input[@name='date']", "value"),
+            "email": add_data_item("(//input[@type='text'])[4]", "value"),
+            "country": add_data_item("//*[@id='vs5__combobox']/div[1]/span", "innerText"),
+            "city": add_data_item("(//input[@type='text'])[5]", "value"),
+            "adress": add_data_item("(//input[@type='text'])[6]", "value"),
+            "mobile": "-".join [add_data_item("//*[@id='vs6__combobox']/div[1]/span", "innerText"
+                                              ), add_data_item("//input[@type='tel']", "value")],
+            "currency": add_data_item("//*[@id='vs7__combobox']/div[1]/span", "innerText"),
+            "username": add_data_item("(//input[@type='text'])[7]", "value"),
+            "refer_code": add_data_item("(//input[@type='text'])[10]", "value")}
 
 
 def admin_userdata_check(registration_info):
