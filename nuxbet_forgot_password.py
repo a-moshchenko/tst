@@ -1,38 +1,18 @@
 from time import sleep
-from selenium import webdriver
-from datetime import date
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions
 import config
+import commonFunctions
 
-browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
-browser.set_window_size(1086, 1020)
-current_date = date.today()
-date = current_date.strftime("%d,%m,%Y")
-screenshot_path = config.SCREENSHOTPATHAUTH
+browser = commonFunctions.browser
+screenshot_path = config.SCREENSHOT_PATH_AUTHORISATION
 main_page_checkpoint = "/html/body/div/div[2]/div/section[4]/header"
 login_form_checkpoint = "/html/body/div/div[1]/div[2]/div/div/div/div"
 login_button_checkpoint = "/html/body/div/nav/div/a[2]"
 print("check, result")
 
 
-def wait_for_element(xpath):
-    try:
-        WebDriverWait(browser, 10).until(
-            expected_conditions.presence_of_element_located((By.XPATH, xpath))
-        )
-    except Exception as e:
-        print(f"page open, Error, {e}")
-
-
-def open_main_page():
-    browser.get(config.SITE)
-    wait_for_element(main_page_checkpoint)
-
-
 def login():
-    open_main_page()
+    commonFunctions.open_page(config.SITE, main_page_checkpoint)
+    commonFunctions.wait_for_element("/html/body/div/div[1]/div/div/div[2]/div[3]/a")
     login_button = browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/a")
     login_button.click()
     try:
@@ -43,20 +23,20 @@ def login():
     forgot_password_button = browser.find_element_by_xpath(
         "/html/body/div/div[1]/div[2]/div/div/div/div/form/div[1]/div[2]/div[2]")
     forgot_password_button.click()
-    wait_for_element(login_form_checkpoint)
+    commonFunctions.wait_for_element(login_form_checkpoint)
     browser.save_screenshot(f"{screenshot_path}ForgotPasswordFormNuxbetDewNuxbet.png")
     print("forgot password form, OK")
     send_button = browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div[2]")
     send_button.click()
     sleep(1)  # слип нужен чтоб дать форме обновиться
-    if str(browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/input"
-                                         ).get_attribute("class")) == "inputError":
+    if browser.find_element_by_xpath(
+            "/html/body/div/div[1]/div[2]/div/div/div/div/form/input").get_attribute("class") == "inputError":
         browser.save_screenshot(f"{screenshot_path}NoMailWarningPasswordRecoveryFormDewNuxbet.png")
         print("no email, OK")
     else:
         print("no email, NotOK")
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/div[2]/span[2]").click()
-    wait_for_element(login_button_checkpoint)
+    commonFunctions.wait_for_element(login_button_checkpoint)
     if browser.current_url == "https://dev.nuxbet.com/tickets/create":
         browser.save_screenshot(f"{screenshot_path}ContactUsDewNuxbet.png")
         print("contact us, OK")

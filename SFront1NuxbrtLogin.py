@@ -1,63 +1,37 @@
 from time import sleep
-from datetime import date
-from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions
+from selenium.common.exceptions import NoSuchElementException
+import commonFunctions
 import config
 
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument("--incognito")
-
-browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
-browser.set_window_size(1086, 1020)
-current_date = date.today()
-date = current_date.strftime("%d,%m,%Y")
-screenshot_path = config.SCREENSHOTPATHAUTH
+browser = commonFunctions.browser
+screenshot_path = config.SCREENSHOT_PATH_AUTHORISATION
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 login_form_checkpoint = "/html/body/div/div[1]/div[2]/div/div/div/div"
-
-
-def wait_for_element(xpath):
-    try:
-        WebDriverWait(browser, 10).until(
-            expected_conditions.presence_of_element_located((By.XPATH, xpath))
-        )
-    except Exception as e:
-        print(f"registration form open, Error, {e}")
-        browser.close()
-
-
-def open_main_page():
-    browser.get(config.SFRONT1SITE)
-    wait_for_element(main_page_checkpoint)
-    browser.refresh()
-    sleep(2)
 
 
 def login_form_open():
     try:
         browser.find_element_by_class_name("loginBtn").click()
-        wait_for_element(login_form_checkpoint)
+        commonFunctions.wait_for_element(login_form_checkpoint)
     except Exception as e:
         print(f"no login button, Error, {e}")
     try:
         browser.find_element_by_xpath(login_form_checkpoint)
         print("Login form, OK")
-    except Exception as e:
-        print(f"Login form, OK, Error {e}")
+    except NoSuchElementException:
+        print(f"Login form, OK")
 
 
 def login_via_mail():
     login_form_open()
-    browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHSHORTNAME)
+    browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHORISATION_SHORT_NAME)
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
     visible_password()
     login_button = browser.find_element_by_css_selector(".btnWrap > .mainBtn")
     login_button.click()
-    wait_for_element(main_page_checkpoint)
-    if browser.page_source.find(config.AUTHSHORTNAME):
+    commonFunctions.wait_for_element(main_page_checkpoint)
+    if browser.page_source.find(config.AUTHORISATION_SHORT_NAME):
         print(f"login, OK\ngoto main page, OK")
         browser.save_screenshot(f"{screenshot_path}LoginViaUsernameSuccessSFront1Nuxbet.png")
     else:
@@ -74,7 +48,7 @@ def log_out():
         print("dropdown menu, OK")
         browser.save_screenshot(f"{screenshot_path}DropdownMenuSFront1Nuxbet.png")
         browser.find_element_by_xpath("//a[7]").click()
-        wait_for_element(main_page_checkpoint)
+        commonFunctions.wait_for_element(main_page_checkpoint)
         try:
             browser.find_element_by_xpath(main_page_checkpoint)
             print("Logout, OK")
@@ -116,7 +90,7 @@ def login_negative_flow():
             print("empty fields warning, NotOK")
             browser.save_screenshot(f"{screenshot_path}emptyFieldsWarningFailSFront1Nuxbet.png")
         browser.refresh()
-        wait_for_element(main_page_checkpoint)
+        commonFunctions.wait_for_element(main_page_checkpoint)
 
         # проверка пустого логина
         browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
@@ -130,10 +104,10 @@ def login_negative_flow():
             print("empty username error, OK")
             browser.save_screenshot(f"{screenshot_path}emptyUsernameWarningFailSFront1Nuxbet.png")
         browser.refresh()
-        wait_for_element(main_page_checkpoint)
+        commonFunctions.wait_for_element(main_page_checkpoint)
 
         # проверка пустого поля пароля
-        browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHSHORTNAME)
+        browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHORISATION_SHORT_NAME)
         login_button = browser.find_element_by_css_selector(".btnWrap > .mainBtn")
         login_button.click()
         if browser.find_element_by_xpath("//input[@type='text']").get_attribute("class") != "inputError" and \
@@ -144,10 +118,10 @@ def login_negative_flow():
             print("empty password error, NotOK")
             browser.save_screenshot(f"{screenshot_path}emptyPasswordWarningFailSFront1Nuxbet.png")
         browser.refresh()
-        wait_for_element(main_page_checkpoint)
+        commonFunctions.wait_for_element(main_page_checkpoint)
 
         # проверка невалидного юзернейма
-        browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTH_NAME_EXIST)
+        browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHORISATION_NAME_EXIST)
         browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
         login_button = browser.find_element_by_css_selector(".btnWrap > .mainBtn")
         login_button.click()
@@ -159,7 +133,7 @@ def login_negative_flow():
             print("invalid username error, NotOK")
             browser.save_screenshot(f"{screenshot_path}emptyUsernameWarningFailSFront1Nuxbet.png")
         browser.refresh()
-        wait_for_element(main_page_checkpoint)
+        commonFunctions.wait_for_element(main_page_checkpoint)
 
         # проверка несуществующего пользователя
         browser.find_element_by_xpath("//input[@type='text']").send_keys(Keys.CONTROL + "a")
@@ -178,11 +152,11 @@ def login_negative_flow():
             print("incorrect authorisation data error massage, NotOK")
             browser.save_screenshot(f"{screenshot_path}incorrectUserDataErrorMessageFailSFront1Nuxbet.png")
         browser.refresh()
-        wait_for_element(main_page_checkpoint)
+        commonFunctions.wait_for_element(main_page_checkpoint)
         forgot_password()
 
     except Exception as e:
-        print(f"invalid data, Error, {e}")
+        print(f"invalid data input, Error, {e}")
 
 
 def forgot_password():
@@ -198,7 +172,7 @@ def forgot_password():
         print("empty password recovery, NotOK")
         browser.save_screenshot(f"{screenshot_path}emptyPasswordRecoveryFailSFront1Nuxbet.png")
     sleep(1)
-    browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHSHORTNAME)
+    browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHORISATION_SHORT_NAME)
     browser.find_element_by_css_selector(".btnWrap > .mainBtn").click()
     sleep(1)
     if browser.page_source.find("shortText.your_password_recovered") > 0:
@@ -222,7 +196,7 @@ def forgot_password():
     login_form_open()
     browser.find_element_by_xpath("//form/div/div[2]/div[2]").click()
     sleep(1)  # нужно чтоб форма обновилась
-    browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTH_NAME_EXIST)
+    browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHORISATION_NAME_EXIST)
     sleep(1)  # нужно чтоб форма обновилась
     browser.find_element_by_css_selector(".btnWrap > .mainBtn").click()
     sleep(2)  # нужно чтоб форма обновилась
@@ -248,23 +222,23 @@ def ticket_create():
         print("ticket created, NotOK")
         browser.save_screenshot(f"{screenshot_path}TicketCreatedFailSFront1Nuxbet.png")
     browser.refresh()
-    open_main_page()
-    wait_for_element(main_page_checkpoint)
+    commonFunctions.open_page(config.SFRONT1_SITE, main_page_checkpoint)
+    commonFunctions.wait_for_element(main_page_checkpoint)
     login_form_open()
     login_via_google()
 
 
 def login_via_google():
     browser.find_element_by_xpath("//img[@alt='google']").click()
-    wait_for_element("//input[@id='identifierId']")
+    commonFunctions.wait_for_element("//input[@id='identifierId']")
     browser.find_element_by_xpath(
-                "//input[@id='identifierId']").send_keys(config.DEFAULTMAIL)
+                "//input[@id='identifierId']").send_keys(config.DEFAULT_MAIL)
     browser.find_element_by_xpath("//input[@id='identifierId']").send_keys(Keys.ENTER)
-    wait_for_element("//*[@id='password']/div[1]/div/div[1]/input")
+    commonFunctions.wait_for_element("//*[@id='password']/div[1]/div/div[1]/input")
     browser.find_element_by_xpath("//*[@id='password']/div[1]/div/div[1]/input").send_keys(config.PASSWORD)
     sleep(1)
     browser.find_element_by_xpath("//*[@id='password']/div[1]/div/div[1]/input").send_keys(Keys.ENTER)
-    wait_for_element(main_page_checkpoint)
+    commonFunctions.wait_for_element(main_page_checkpoint)
     sleep(3)
     if browser.page_source.find("109693494692241829544") > 0:
         print("google login, OK")
@@ -272,7 +246,7 @@ def login_via_google():
         print("google login, NotOK")
 
 
-open_main_page()
+commonFunctions.open_page(config.SFRONT1_SITE, main_page_checkpoint)
 login_via_mail()
 login_negative_flow()
 browser.close()

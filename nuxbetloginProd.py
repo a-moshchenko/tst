@@ -1,35 +1,11 @@
 from time import sleep
-from datetime import date
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions
+import commonFunctions
 import config
 
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument("--incognito")
-browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
-browser.set_window_size(1086, 1020)
-current_date = date.today()
-data = current_date.strftime("%d,%m,%Y")
-screenshot_path = config.SCREENSHOTPATHAUTH
+browser = commonFunctions.browser
+screenshot_path = config.SCREENSHOT_PATH_AUTHORISATION
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 logout_dropdown_menu = "/html/body/div/div[2]/div/section[4]/header"
-
-
-def wait_for_element(xpath):
-    try:
-        WebDriverWait(browser, 10).until(
-            expected_conditions.presence_of_element_located((By.XPATH, xpath))
-        )
-    except Exception as e:
-        print(f"page open, Error, {e}")
-        browser.close()
-
-
-def open_main_page():
-    browser.get("https://nuxbet.com/")
-    wait_for_element(main_page_checkpoint)
 
 
 def password_visibility_check():
@@ -39,7 +15,7 @@ def password_visibility_check():
     password_vizible = str(browser.find_element_by_xpath("(//input[@type='text'])[2]").get_attribute("value"))
     try:
         if password_vizible == config.PASSWORD:
-            browser.save_screenshot(str(current_date) + "VisiblePasswordNuxbet.png")
+            browser.save_screenshot(f"{config.SCREENSHOT_PATH_AUTHORISATION}VisiblePasswordNuxbet.png")
             print("password vizible, OK")
         else:
             print("password vizible, NotOK")
@@ -48,7 +24,7 @@ def password_visibility_check():
 
 
 def login_positive_flow():
-    open_main_page()
+    commonFunctions.open_page(config.SITE_PROD, main_page_checkpoint)
     browser.find_element_by_css_selector(".loginBtn").click()
 
     try:
@@ -57,7 +33,7 @@ def login_positive_flow():
     except Exception as e:
         print(f"auth form, NotOK, {e}")
     login_mail = browser.find_element_by_xpath("//input[@type='text']")
-    login_mail.send_keys(config.AUTH_NAME_EXIST)
+    login_mail.send_keys(config.AUTHORISATION_NAME_EXIST)
     password = browser.find_element_by_xpath("//input[@type='password']")
     password.send_keys(config.PASSWORD)
     sleep(1)  # слип нужен, чтоб изменения отобразились в браузере
@@ -67,8 +43,8 @@ def login_positive_flow():
     sleep(2)
     try:
         uname = browser.find_element_by_xpath("//span[@class='userName ellipsis']")
-        if uname.text == config.AUTH_NAME_EXIST:
-            browser.save_screenshot(str(current_date) + "LogedInNuxbet.png")
+        if uname.text == config.AUTHORISATION_NAME_EXIST:
+            browser.save_screenshot(f"{config.SCREENSHOT_PATH_AUTHORISATION}LogedInNuxbet.png")
             print("auth, OK\nmain page return, OK")
         else:
             print("NOK, uname: ", uname.text)
@@ -78,7 +54,7 @@ def login_positive_flow():
 
 
 def log_out():
-    wait_for_element(logout_dropdown_menu)
+    commonFunctions.wait_for_element(logout_dropdown_menu)
     print("page loaded")
     try:
         browser.find_element_by_xpath("//span[@class='userName ellipsis']").click()
@@ -89,7 +65,7 @@ def log_out():
 
 
 def login_negative_flow():
-    open_main_page()
+    commonFunctions.open_page(config.SITE_PROD, main_page_checkpoint)
     try:
         log_out()
     except Exception as e:
@@ -119,33 +95,33 @@ def login_negative_flow():
     else:
         print("mail error messaage, OK")
     if browser.page_source.find("This field is required") > 0:
-        browser.save_screenshot(str(current_date) + "NoEtMailNoPasswordNuxbet.png")
+        browser.save_screenshot(f"{config.SCREENSHOT_PATH_AUTHORISATION}NoEtMailNoPasswordNuxbet.png")
         print("empty field message, OK")
     else:
         print("empty field message, OK")
 
     login_mail = browser.find_element_by_xpath(
         "//input[@type='text']")  # проверка валидной почты с незаполненным паролем
-    login_mail.send_keys(config.AUTH_NAME_EXIST)
+    login_mail.send_keys(config.AUTHORISATION_NAME_EXIST)
     login_button = browser.find_element_by_css_selector(".btnWrap > .mainBtn")
     login_button.click()
     sleep(1)  # слип нужен чтоб форма обновилась
     if login_mail.get_attribute("class") != "inputError":
-        browser.save_screenshot(f"{current_date}NoPasswordNuxbet.png")
+        browser.save_screenshot(f"{config.SCREENSHOT_PATH_AUTHORISATION}NoPasswordNuxbet.png")
         print("valid mail, OK")
     else:
         print("valid mail, NotOK")
     browser.refresh()
 
     login_mail = browser.find_element_by_xpath("//input[@type='text']")  # проверка валидной почты с неверным паролем
-    login_mail.send_keys(config.AUTH_NAME_EXIST)
+    login_mail.send_keys(config.AUTHORISATION_NAME_EXIST)
     login_button = browser.find_element_by_xpath("//form/div[2]/button")
     password = browser.find_element_by_xpath("//input[@type='password']")
     password.send_keys("password")
     login_button.click()
     sleep(1)  # слип нужен чтоб форма обновилась
     if browser.page_source.find("Incorrect login or password. Please check again."):
-        browser.save_screenshot(str(current_date) + "WrongPasswordNuxbet.png")
+        browser.save_screenshot(f"{config.SCREENSHOT_PATH_AUTHORISATION}WrongPasswordNuxbet.png")
         print("invalid password message, OK")
     else:
         print("invalid password message, NotOK")

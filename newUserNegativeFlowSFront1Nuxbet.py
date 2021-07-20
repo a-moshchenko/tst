@@ -1,19 +1,10 @@
 from time import sleep
 import random
-from datetime import date
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions
+import commonFunctions
 import config
 
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument("--incognito")
-browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH, options=chrome_options)
-browser.set_window_size(1086, 1020)
-current_date = date.today()
-date = current_date.strftime("%d,%m,%Y")
-screenshot_path = config.SCREENSHOTPATHAUTH
+browser = commonFunctions.browser
+screenshot_path = config.SCREENSHOT_PATH_AUTHORISATION
 authorisation_form_checkpoint = "/html/body/div/div[1]/div[2]/div/div/div/div"
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 
@@ -21,7 +12,7 @@ main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 def random_four_digits_number():
     # генерит рандомную строку из четырех цыфр
     random_four_digits = ""
-    for i in range(4):
+    for iterable_element_in_sequence_of_numbers_created_by_range in range(4):
         random_four_digits += str(random.randint(1, 9))
     return random_four_digits
 
@@ -29,28 +20,12 @@ def random_four_digits_number():
 user_name = f"autotestuser{random_four_digits_number()}"
 
 
-def wait_for_element(xpath):
-    try:
-        WebDriverWait(browser, 10).until(
-            expected_conditions.presence_of_element_located((By.XPATH, xpath))
-        )
-    except Exception as e:
-        print(f"registration form open, Error, {e}")
-        browser.close()
-
-
 def authorisation_form_open():
     sleep(1)
     browser.find_element_by_css_selector(".regBtn").click()
-    wait_for_element(authorisation_form_checkpoint)
+    commonFunctions.wait_for_element(authorisation_form_checkpoint)
     browser.refresh()
-    wait_for_element(authorisation_form_checkpoint)
-
-
-def open_main_page():
-    browser.get(config.SFRONT1SITE)
-    wait_for_element(main_page_checkpoint)
-    browser.refresh()
+    commonFunctions.wait_for_element(authorisation_form_checkpoint)
 
 
 def warning_check(object_address, checked_object):
@@ -71,7 +46,7 @@ def negative_flow_authorization():
     browser.save_screenshot(f"{screenshot_path}EmptyFieldsSFront1Nuxbet.png")
 
     # проверяем без паролей
-    open_main_page()
+    commonFunctions.open_page(config.SFRONT1_SITE, main_page_checkpoint)
     # auth_open()
     browser.find_element_by_xpath("//input[@type='text']").send_keys("autotestuser0000")
     browser.find_element_by_xpath("//div[6]/button").click()
@@ -91,7 +66,7 @@ def negative_flow_authorization():
     browser.save_screenshot(f"{screenshot_path}EmptyPasswordsSFront1Nuxbet.png")
 
     # проверяем с неправильным подтверждением пароля
-    open_main_page()
+    commonFunctions.open_page(config.SFRONT1_SITE, main_page_checkpoint)
     # auth_open()
     browser.find_element_by_xpath("//input[@type='text']").send_keys("autotestuser0000")
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
@@ -102,7 +77,7 @@ def negative_flow_authorization():
     browser.save_screenshot(f"{screenshot_path}WrongPasswordConfirmationSFront1Nuxbet.png")
 
     # проверяем с нечекнутым T&C боксом
-    open_main_page()
+    commonFunctions.open_page(config.SFRONT1_SITE, main_page_checkpoint)
     browser.find_element_by_xpath("//input[@type='text']").send_keys("autotestuser0000")
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
     browser.find_element_by_xpath("(//input[@type='password'])[2]").send_keys(config.PASSWORD)
@@ -110,15 +85,15 @@ def negative_flow_authorization():
     warning_check("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/label", "T&C confirmation")
 
     # проверяем киррилицу в поле юзернейм
-    open_main_page()
+    commonFunctions.open_page(config.SFRONT1_SITE, main_page_checkpoint)
     # auth_open()
     browser.find_element_by_xpath("//input[@type='text']").send_keys("юзернейм")
     warning_check("//input[@type='text']", "cyrylik username")
     browser.save_screenshot(f"{screenshot_path}CyrylikUsernameSFront1Nuxbet.png")
 
     # проверяем ранее зарегистрированный юзернейм
-    open_main_page()
-    browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHSHORTNAME)
+    commonFunctions.open_page(config.SFRONT1_SITE, main_page_checkpoint)
+    browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHORISATION_SHORT_NAME)
     browser.find_element_by_xpath("//input[@type='password']").send_keys("secretZ2")
     browser.find_element_by_xpath("(//input[@type='password'])[2]").send_keys("secretZ2")
     try:
@@ -135,6 +110,6 @@ def negative_flow_authorization():
     browser.save_screenshot(f"{screenshot_path}ExistingUsernameSFront1Nuxbet.png")
 
 
-open_main_page()
+commonFunctions.open_page(config.SFRONT1_SITE, main_page_checkpoint)
 negative_flow_authorization()
 browser.close()

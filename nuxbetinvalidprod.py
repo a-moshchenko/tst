@@ -1,36 +1,13 @@
 from time import sleep
-from datetime import date
-from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions
+import commonFunctions
 import config
 
-browser = webdriver.Chrome(executable_path=config.EXECUTABLE_PATH)
-browser.set_window_size(1086, 1020)
-current_date = date.today()
-data = current_date.strftime("%d,%m,%Y")
-screenshot_path = config.SCREENSHOTPATHAUTH
+browser = commonFunctions.browser
+screenshot_path = config.SCREENSHOT_PATH_AUTHORISATION
 print("check, result")
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
-redistration_form_checkpoint = "/html/body/div/div[2]/div/section/div"
-
-
-def wait_for_element(xpath):
-    try:
-        WebDriverWait(browser, 10).until(
-            expected_conditions.presence_of_element_located((By.XPATH, xpath))
-        )
-    except Exception as e:
-        print(f"page open, Error, {e}")
-        browser.close()
-
-
-def open_main_page():
-    browser.get("https://nuxbet.com/")
-    browser.refresh()
-    wait_for_element(main_page_checkpoint)
+registration_form_checkpoint = "/html/body/div/div[2]/div/section/div"
 
 
 def registration_form_open():
@@ -38,9 +15,10 @@ def registration_form_open():
     registration_button = browser.find_element_by_class_name("regBtn")
     registration_button.click()
     sleep(1)  # без этого слипа работает только в дебаге)
-    wait_for_element(redistration_form_checkpoint)
+    commonFunctions.wait_for_element(registration_form_checkpoint)
     browser.refresh()
-    wait_for_element(redistration_form_checkpoint)
+    commonFunctions.wait_for_element(registration_form_checkpoint)
+
 
 
 def warning_check(element_xpath, element_name):
@@ -52,15 +30,14 @@ def warning_check(element_xpath, element_name):
 
 
 def password_confirmation_error():
-    open_main_page()
-    registration_form_open()
+    commonFunctions.open_page(config.SITE_PROD, main_page_checkpoint)
+    commonFunctions.register_open(registration_form_checkpoint)
     # Вводим пароль и некорректное подтверждение
     password_field = browser.find_element_by_xpath("//input[@type='password']")
     password_field.click()
     password_field.send_keys(config.PASSWORD)
     sleep(1)  # слип нужен для разделения ввода
     password_field.send_keys(Keys.TAB)
-
     password_confirm_field = browser.find_element_by_xpath("(//input[@type='password'])[2]")
     password_confirm_field.click()
     password_confirm_field.send_keys("secretZ2")
@@ -74,7 +51,7 @@ def password_confirmation_error():
 
 def invalid_email_error():
     # Вводим емайл без собаки
-    open_main_page()
+    browser.refresh()
     # register_open()
     email_field = browser.find_element_by_xpath("//input[@type='text']")
     email_field.click()
@@ -92,7 +69,7 @@ def invalid_email_error():
         print("e-mail errMsg, NotOK")
 
     # Вводим емайл без домена
-    open_main_page()
+    browser.refresh()
     # register_open()
     email_field = browser.find_element_by_xpath("//input[@type='text']")
     email_field.click()
@@ -106,7 +83,7 @@ def invalid_email_error():
         print("no domain mail, NotOK")
 
     # Вводим мейл с кириллицей
-    open_main_page()
+    browser.refresh()
     # register_open()
     email_field = browser.find_element_by_xpath("//input[@type='text']")
     email_field.click()
@@ -126,7 +103,7 @@ def invalid_email_error():
         print("cyr mail, NotOK")
 
     # Вводим мейл с пробелом
-    open_main_page()
+    browser.refresh()
     # register_open()
     email_field = browser.find_element_by_xpath("//input[@type='text']")
     email_field.click()
@@ -140,11 +117,11 @@ def invalid_email_error():
         print("space domain, NotOK")
 
     # Вводим ранее зарегистрированный мейл
-    open_main_page()
+    browser.refresh()
     # register_open()
     email_field = browser.find_element_by_xpath("//input[@type='text']")
     email_field.click()
-    email_field.send_keys(config.AUTHNAME)
+    email_field.send_keys(config.AUTHORISATION_NAME)
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)  # вводим пароль
     browser.find_element_by_xpath("(//input[@type='password'])[2]").send_keys(config.PASSWORD)  # подтверждаем пароль
     browser.execute_script("arguments[0].click();", (browser.find_element_by_xpath(
@@ -160,7 +137,7 @@ def invalid_email_error():
 
 def req_fields_empty():
     # Проверка алертов на незаполненых обязательных полях
-    open_main_page()
+    browser.refresh()
     # register_open()
     browser.find_element_by_xpath(
         "//div[7]/button").click()  # нажимаем "зарегистрироваться" в форме регистрации
@@ -177,7 +154,7 @@ def req_fields_empty():
 
 def login_through_auth():
     # проверка перехода на форму логина с формы регистрации
-    open_main_page()
+    browser.refresh()
     # register_open()
     sleep(1)
     browser.find_element_by_xpath("//div[2]/span[2]").click()
