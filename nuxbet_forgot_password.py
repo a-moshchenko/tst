@@ -57,8 +57,10 @@ def login():
     else:
         print("security code sent, OK")
     sleep(1)
-    browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/div[1]/button").click()
-    browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/div[1]/button").click()
+    close_form_button = browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/div[1]/button")
+    close_form_button.click()
+    sleep(1)
+    close_form_button.click()
     browser.get(config.SITE+"tickets/create")
     sleep(1)
     user_name = browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div[1]/input")

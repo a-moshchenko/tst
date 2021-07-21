@@ -47,6 +47,7 @@ def log_out():
         sleep(1)  # нужно чтоб появилось дропдаун меню
         print("dropdown menu, OK")
         browser.save_screenshot(f"{screenshot_path}DropdownMenuSFront1Nuxbet.png")
+        sleep(2)
         browser.find_element_by_xpath("//a[7]").click()
         commonFunctions.wait_for_element(main_page_checkpoint)
         try:

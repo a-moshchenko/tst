@@ -56,6 +56,7 @@ def log_out():
     try:
         browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/span[2]").click()
         commonFunctions.wait_for_element("/html/body/div/div[1]/div/div/div[2]/div[3]/div[2]/a[8]")
+        sleep(1)
         browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/div[2]/a[8]").click()
     except NoSuchElementException:  # ексепшн является частью позитив флоу
         print("logged out")

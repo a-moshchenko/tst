@@ -58,7 +58,7 @@ def log_out():
     print("page loaded")
     try:
         browser.find_element_by_xpath("//span[@class='userName ellipsis']").click()
-        sleep(1)
+        sleep(2)
         browser.find_element_by_xpath("//a[@href='#']").click()
     except Exception as e:
         print(f"logged out, {e}")

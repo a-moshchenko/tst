@@ -34,6 +34,7 @@ def authorisation_form_open():
 
 
 def admin_logout():
+    sleep(2)
     browser.find_element_by_xpath("/html/body/div[1]/header/nav/div/ul/li/a/span").click()
     sleep(1)
 

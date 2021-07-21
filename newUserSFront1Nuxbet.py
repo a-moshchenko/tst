@@ -40,6 +40,7 @@ def fill_one_field(element_xpath, element_data, element_name):
     except Exception as e:
         print(f"u{element_name} input Error, {e}")
 
+
 def fill_fields():
     fill_one_field("//input[@type='text']", user_name, "username")
     fill_one_field("//input[@type='password']", config.PASSWORD, "password")
@@ -73,7 +74,7 @@ def log_out():
     commonFunctions.open_page(config.SFRONT1_SITE, main_page_checkpoint)
     try:
         browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/span[1]").click()
-        sleep(1)  # ждем появления дропдаyн меню
+        sleep(2)  # ждем появления дропдаyн меню
         browser.find_element_by_xpath("/html/body/div/div[1]/div/div/div[2]/div[3]/div[2]/a[7]").click()
         commonFunctions.open_page(config.SFRONT1_SITE, main_page_checkpoint)
     except Exception as e:

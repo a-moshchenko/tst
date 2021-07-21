@@ -120,7 +120,7 @@ def login_positive_flow():
     sleep(2)
     try:
         browser.find_element_by_xpath("//span[@class = 'userName ellipsis']").click()
-        sleep(1)  # ждем появления дропдаyн меню
+        sleep(2)  # ждем появления дропдаyн меню
         browser.find_element_by_xpath("//a[@href='#']").click()
         commonFunctions.open_page(config.SFRONT3_SITE, main_page_checkpoint)
     except Exception as e:

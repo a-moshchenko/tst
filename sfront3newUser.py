@@ -196,7 +196,7 @@ def registration_negative_flow():
 def log_out():
     browser.find_element_by_css_selector(".userName").click()
     commonFunctions.wait_for_element("//a[contains(@href, '#')]")
-    sleep(1)
+    sleep(2)
     browser.find_element_by_xpath("//a[contains(@href, '#')]").click()
     browser.refresh()
     commonFunctions.wait_for_element("/html/body/div/div[2]/div/section[2]/div")
