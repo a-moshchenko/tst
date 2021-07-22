@@ -92,6 +92,8 @@ def login():
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/input").send_keys("invalidmail")
     browser.find_element_by_xpath("/html/body/div/div[1]/div[2]/div/div/div/div/form/div[2]/button").click()
     sleep(1)  # ждем пока форма обновится
+    if not commonFunctions.capcha_finder():
+        return None
     if browser.page_source.find("Your password cannot be recovered, contact support.") > 0:
         browser.save_screenshot(f"{screenshot_path}TicketNotCreatedDewNuxbet.png")
         print("invalid mail message, OK")

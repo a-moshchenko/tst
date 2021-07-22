@@ -30,6 +30,8 @@ def login_via_mail():
     visible_password()
     login_button = browser.find_element_by_css_selector(".btnWrap > .mainBtn")
     login_button.click()
+    if not commonFunctions.capcha_finder():
+        return None
     commonFunctions.wait_for_element(main_page_checkpoint)
     if browser.page_source.find(config.AUTHORISATION_SHORT_NAME):
         print(f"login, OK\ngoto main page, OK")
@@ -76,6 +78,8 @@ def login_negative_flow():
         # проверка пустых полей
         login_button = browser.find_element_by_css_selector(".btnWrap > .mainBtn")
         login_button.click()
+        if not commonFunctions.capcha_finder():
+            return None
         if browser.find_element_by_xpath("//input[@type='text']").get_attribute("class") == "inputError":
             print("no username error, OK")
         else:
@@ -97,6 +101,8 @@ def login_negative_flow():
         browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
         login_button = browser.find_element_by_css_selector(".btnWrap > .mainBtn")
         login_button.click()
+        if not commonFunctions.capcha_finder():
+            return None
         if browser.find_element_by_xpath("//input[@type='text']").get_attribute("class") == "inputError" and \
                 browser.find_element_by_xpath("//input[@type='password']").get_attribute("class") != "inputError":
             print("empty username error, OK")
@@ -111,6 +117,8 @@ def login_negative_flow():
         browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHORISATION_SHORT_NAME)
         login_button = browser.find_element_by_css_selector(".btnWrap > .mainBtn")
         login_button.click()
+        if not commonFunctions.capcha_finder():
+            return None
         if browser.find_element_by_xpath("//input[@type='text']").get_attribute("class") != "inputError" and \
                 browser.find_element_by_xpath("//input[@type='password']").get_attribute("class") == "inputError":
             print("empty password error, OK")
@@ -126,6 +134,8 @@ def login_negative_flow():
         browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
         login_button = browser.find_element_by_css_selector(".btnWrap > .mainBtn")
         login_button.click()
+        if not commonFunctions.capcha_finder():
+            return None
         if browser.find_element_by_xpath("//input[@type='text']").get_attribute("class") == "inputError" and \
                 browser.find_element_by_xpath("//input[@type='password']").get_attribute("class") != "inputError":
             print("invalid username error, OK")
@@ -145,7 +155,8 @@ def login_negative_flow():
         browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
         login_button = browser.find_element_by_css_selector(".btnWrap > .mainBtn")
         login_button.click()
-        sleep(2)  # форма обновляется
+        if not commonFunctions.capcha_finder():
+            return None
         if browser.page_source.find("Incorrect login or password. Please check again.") > 0:
             print("incorrect authorisation data error massage, OK")
             browser.save_screenshot(f"{screenshot_path}incorrectUserDataErrorMessageSFront1Nuxbet.png")

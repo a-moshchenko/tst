@@ -77,6 +77,8 @@ def login_negative_flow():
     login_button = browser.find_element_by_xpath("//form/div[2]/button")
     login_button.click()
     sleep(1)  # слип нужен чтоб форма обновилась
+    if not commonFunctions.capcha_finder():
+        return None
     if login_mail.get_attribute("class") == "inputError":
         browser.save_screenshot(f"{screenshot_path}NoEtMailLoginDevNuxbet.png")
         print("mail without et, OK")
@@ -100,6 +102,8 @@ def login_negative_flow():
     login_button = browser.find_element_by_xpath("//form/div[2]/button")
     login_button.click()
     sleep(1)  # слип нужен чтоб форма обновилась
+    if not commonFunctions.capcha_finder():
+        return None
     if login_mail.get_attribute("class") != "inputError":
         browser.save_screenshot(f"{screenshot_path}NoMailDevNuxbet.png")
         print("valid mail, OK")
@@ -114,6 +118,8 @@ def login_negative_flow():
     password.send_keys("password")
     login_button.click()
     sleep(1)  # слип нужен чтоб форма обновилась
+    if not commonFunctions.capcha_finder():
+        return None
     if browser.page_source.find("Incorrect login or password. Please check again."):
         browser.save_screenshot(f"{screenshot_path}WrongPasswordLoginPasswordDevNuxbet.png")
         print("invalid password message, OK")

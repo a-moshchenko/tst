@@ -39,6 +39,8 @@ def negative_flow_authorization():
     # проверяем пустые поля
     authorisation_form_open()
     browser.find_element_by_xpath("//div[6]/button").click()
+    if not commonFunctions.capcha_finder():
+        return None
     warning_check("//input[@type='text']", "username")
     warning_check("//input[@type='password']", "password")
     warning_check("(//input[@type='password'])[2]", "password confirmation")
@@ -47,14 +49,14 @@ def negative_flow_authorization():
 
     # проверяем без паролей
     commonFunctions.open_page(config.SFRONT1_SITE, main_page_checkpoint)
-    # auth_open()
     browser.find_element_by_xpath("//input[@type='text']").send_keys("autotestuser0000")
     browser.find_element_by_xpath("//div[6]/button").click()
+    if not commonFunctions.capcha_finder():
+        return None
     if browser.find_element_by_xpath("//input[@type='text']").get_attribute("class") != "inputError":
         print("no username warning, OK")
     else:
         print("no username warning, NotOK")
-
     warning_check("//input[@type='password']", "password")
     warning_check("(//input[@type='password'])[2]", "password confirmation")
     warning_check("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/label", "T&C confirmation")
@@ -82,6 +84,8 @@ def negative_flow_authorization():
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
     browser.find_element_by_xpath("(//input[@type='password'])[2]").send_keys(config.PASSWORD)
     browser.find_element_by_xpath("//div[6]/button").click()
+    if not commonFunctions.capcha_finder():
+        return None
     warning_check("/html/body/div/div[1]/div[2]/div/div/div/div/form/div/div/label", "T&C confirmation")
 
     # проверяем киррилицу в поле юзернейм
@@ -103,6 +107,8 @@ def negative_flow_authorization():
         print(f"T&C Error, {e}")
     browser.find_element_by_xpath("//div[6]/button").click()
     sleep(1)  # нужно чтоб форма обновилась
+    if not commonFunctions.capcha_finder():
+        return None
     if browser.page_source.find("Username/Email already exist") > 0:
         print("ExistingUser warning, OK")
     else:

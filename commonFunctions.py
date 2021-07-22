@@ -37,3 +37,13 @@ def register_open(form_checkpoint):
     wait_for_element(form_checkpoint)
     browser.refresh()
     wait_for_element(form_checkpoint)
+
+
+def capcha_finder():
+    sleep(1)
+    source = browser.page_source
+    if str(source).find("Some problems with captcha") > 0:
+        print("Error! Capcha found! Turn off capcha and rerun")
+        return False
+    else:
+        return True

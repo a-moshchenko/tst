@@ -27,6 +27,8 @@ def login_negative_flow():
     # проверка пустых полей
     browser.find_element_by_xpath("//form/div[2]/button").click()
     sleep(1)
+    if not commonFunctions.capcha_finder():
+        return None
     warning_check("//input[@type='text']", "email")
     warning_check("//input[@type='password']", "password")
     if browser.page_source.count("This field is required") == 2:
@@ -38,6 +40,8 @@ def login_negative_flow():
     browser.refresh()
     browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHORISATION_NAME)
     browser.find_element_by_xpath("//input[@type='text']").send_keys(Keys.ENTER)
+    if not commonFunctions.capcha_finder():
+        return None
     if browser.find_element_by_xpath("//input[@type='text']").get_attribute("class") != "inputError":
         print("no email warning, OK")
     else:
@@ -48,6 +52,8 @@ def login_negative_flow():
     browser.refresh()
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
     browser.find_element_by_xpath("//input[@type='text']").send_keys(Keys.ENTER)
+    if not commonFunctions.capcha_finder():
+        return None
     warning_check("//input[@type='text']", "email")
     if browser.find_element_by_xpath("//input[@type='password']").get_attribute("class") != "inputError":
         print("no password warning, OK")
@@ -66,12 +72,16 @@ def login_negative_flow():
     browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHORISATION_NAME)
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
     browser.find_element_by_xpath("//input[@type='text']").send_keys(Keys.ENTER)
+    if not commonFunctions.capcha_finder():
+        return None
     warning_check("//input[@type='text']", "email")
 
     # проверка несуществующей почты
     browser.refresh()
     browser.find_element_by_xpath("//input[@type='text']").send_keys("notexisting@mail.com")
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
+    if not commonFunctions.capcha_finder():
+        return None
     browser.find_element_by_xpath("//input[@type='text']").send_keys(Keys.ENTER)
     sleep(1)  # форма в это время обновляется
     if browser.page_source.find("Incorrect login or password. Please check again.") > 0:
@@ -85,6 +95,8 @@ def login_negative_flow():
     browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHORISATION_NAME)
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD[1:])
     browser.find_element_by_xpath("//input[@type='text']").send_keys(Keys.ENTER)
+    if not commonFunctions.capcha_finder():
+        return None
     sleep(1)  # форма в это время обновляется
     if browser.page_source.find("Incorrect login or password. Please check again.") > 0:
         print("incorrect login or password message, OK")
@@ -97,6 +109,8 @@ def login_negative_flow():
     browser.find_element_by_xpath("//input[@type='text']").send_keys(config.DEFAULT_MAIL)
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD[1:])
     browser.find_element_by_xpath("//input[@type='text']").send_keys(Keys.ENTER)
+    if not commonFunctions.capcha_finder():
+        return None
     sleep(1)  # форма в это время обновляется
     if browser.page_source.find("This account can only be logged by Google") > 0:
         print("Google account warning message, OK")
@@ -110,6 +124,8 @@ def login_positive_flow():
     browser.find_element_by_xpath("//input[@type='text']").send_keys(config.AUTHORISATION_NAME)
     browser.find_element_by_xpath("//input[@type='password']").send_keys(config.PASSWORD)
     browser.find_element_by_xpath("//input[@type='password']").send_keys(Keys.ENTER)
+    if not commonFunctions.capcha_finder():
+        return None
     commonFunctions.wait_for_element(main_page_checkpoint)
     if browser.page_source.find(config.AUTHORISATION_NAME) > 0:
         print("email login, OK")
@@ -140,6 +156,8 @@ def forgot_password():
         print("Empty email access recovery field, NotOK")
     browser.find_element_by_xpath("//input[@type = 'text']").send_keys(config.AUTHORISATION_NAME)
     browser.find_element_by_xpath("//input[@type = 'text']").send_keys(Keys.ENTER)
+    if not commonFunctions.capcha_finder():
+        return None
     sleep(1)
     if browser.page_source.find("We have sent a verification code to your email") > 0:
         print("access recovery, OK")
@@ -152,6 +170,8 @@ def forgot_password():
     commonFunctions.wait_for_element("/html/body/div/div[1]/div[2]/div/div/div/div")
     browser.find_element_by_xpath("//input[@type = 'text']").send_keys(config.AUTHORISATION_SHORT_NAME)
     browser.find_element_by_xpath("//input[@type = 'text']").send_keys(Keys.ENTER)
+    if not commonFunctions.capcha_finder():
+        return None
     sleep(1)
     if browser.page_source.find("Your password cannot be recovered, contact support.") > 0:
         print("access recovery username warning, OK")

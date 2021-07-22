@@ -5,7 +5,6 @@ import config
 
 browser = commonFunctions.browser
 screenshot_path = config.SCREENSHOT_PATH_AUTHORISATION
-print("check, result")
 main_page_checkpoint = "/html/body/div/div[2]/div/section[2]/div"
 registration_form_checkpoint = "/html/body/div/div[2]/div/section/div"
 
@@ -18,7 +17,6 @@ def registration_form_open():
     commonFunctions.wait_for_element(registration_form_checkpoint)
     browser.refresh()
     commonFunctions.wait_for_element(registration_form_checkpoint)
-
 
 
 def warning_check(element_xpath, element_name):
@@ -58,6 +56,8 @@ def invalid_email_error():
     email_field.send_keys("qwertry")
     registration_button = browser.find_element_by_xpath("//div[7]/button")
     registration_button.click()
+    if not commonFunctions.capcha_finder():
+        return None
     if email_field.get_attribute("class") == "inputError":
         print("no at mail, OK")
     else:
@@ -76,6 +76,8 @@ def invalid_email_error():
     email_field.send_keys("qwertry@")
     registration_button = browser.find_element_by_xpath("//div[7]/button")
     registration_button.click()
+    if not commonFunctions.capcha_finder():
+        return None
     if email_field.get_attribute("class") == "inputError":
         browser.save_screenshot(f"{screenshot_path}NoDomainNuxbet.png")
         print("no domain mail, OK")
@@ -96,6 +98,8 @@ def invalid_email_error():
     registration_button = browser.find_element_by_xpath("//div[7]/button")
     registration_button.click()
     sleep(1)  # слип нужен чтоб дать форме измениться
+    if not commonFunctions.capcha_finder():
+        return None
     if browser.page_source.find("Wrong"):
         browser.save_screenshot(f"{screenshot_path}CyrylikMailNuxbet.png")
         print("cyr mail, OK")
@@ -110,6 +114,8 @@ def invalid_email_error():
     email_field.send_keys('"space mail"@mail.u')
     registration_button = browser.find_element_by_xpath("//div[7]/button")
     registration_button.click()
+    if not commonFunctions.capcha_finder():
+        return None
     if email_field.get_attribute("class") == "inputError":
         browser.save_screenshot(f"{screenshot_path}SpaceMailNuxbet.png")
         print("space domain, OK")
@@ -128,6 +134,8 @@ def invalid_email_error():
         "//form/div/div/label")))  # соглашаемся с T&C
     registration_button = browser.find_element_by_xpath("//div[7]/button")
     registration_button.click()
+    if not commonFunctions.capcha_finder():
+        return None
     if browser.page_source.find("Username/Email already exist") > 0:
         browser.save_screenshot(f"{screenshot_path}UsedMailNuxbet.png")
         print("used mail alert, OK")
@@ -141,7 +149,8 @@ def req_fields_empty():
     # register_open()
     browser.find_element_by_xpath(
         "//div[7]/button").click()  # нажимаем "зарегистрироваться" в форме регистрации
-    sleep(1)  # нужен чтоб форма успела обновиться
+    if not commonFunctions.capcha_finder():
+        return None
     # mail_field = browser.find_element_by_xpath("//input[@type='text']")
     # print(mail_field.get_attribute("class"))  # разкомментить если нужно дебажить
     warning_check("//input[@type='text']", "mail")  # проверяем наличие ворнинга в поле имейла
