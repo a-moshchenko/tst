@@ -1,5 +1,5 @@
 from nuxbetCapchaCheck import CaptchaCheck
-from creator import LoginTest
+from nuxbetloginProd import LoginTest
 import pytest
 import config
 
