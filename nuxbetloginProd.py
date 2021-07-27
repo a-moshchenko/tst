@@ -45,7 +45,7 @@ class LoginTest:
 
     def incorrect_password(self):
         self.input_login()
-        self.driver.interaction_with(Locators.PASSWORD_FIELD, text=config.AUTHORISATION_NAME[1:])
+        self.driver.interaction_with(Locators.PASSWORD_FIELD, text=config.AUTHORISATION_NAME)
         self.log_in()
         return self.driver.interaction_with(Locators.INCORRECT_INPUT).text
 
