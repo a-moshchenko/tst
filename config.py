@@ -1,6 +1,8 @@
 from pathlib import Path
 from datetime import datetime
 
+DEBUG = True
+
 current_date = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
 # универсальные данные

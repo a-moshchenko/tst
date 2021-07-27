@@ -1,53 +1,41 @@
-from time import sleep
-from selenium.common.exceptions import NoSuchElementException
-import commonFunctions
+from enum import Enum
+from selenium.common.exceptions import TimeoutException
 import config
 
-browser = commonFunctions.browser
-screenshot_path = config.SCREENSHOT_PATH_AUTHORISATION
-main_page_checkpoint = "/html/body/div/div[2]/div/section[4]/header"
+
+class Locators(str, Enum):
+
+    GO_TO_LOGIN = "//a[@class='loginBtn']"
+    INPUT_FIELD = "//input[@type='text']"
+    PASSWORD_FIELD = "//input[@type='password']"
+    LOGIN_BUTTON = "//button[@class='mainBtn']"
+    CAPTCHA_ELEMENT = "//div[@class='rc-anchor-logo-text']"
 
 
-def open_main_page():
-    browser.get(config.SITE)
-    commonFunctions.wait_for_element(main_page_checkpoint)
+class CaptchaCheck:
 
+    def __init__(self, driver):
+        self.driver = driver
+        self.base_url = config.SITE
 
-def login_opn():
-    login_button_main = browser.find_element_by_xpath("//a[@class='loginBtn']")
-    login_button_main.click()
+    def open_site(self):
+        self.driver.go_to(self.base_url)
 
+    def open_login_form(self):
+        self.driver.interaction_with(Locators.GO_TO_LOGIN, clickable=True, click=True)
 
-def general_run():
-    commonFunctions.open_page(config.SITE, main_page_checkpoint)
-    login_opn()
-    sleep(1)
-    browser.find_element_by_xpath("//input[@type='text']").send_keys(
-        config.AUTHORISATION_NAME)  # вводим мейл пользователя
-    """  # Эти действия используются для проверуи капчи на форме авторизации
-    browser.find_element_by_xpath("(//input[@type='text'])[2]").send_keys(
-        "LoremIpsum")  # вводим имя пользователя
-    """
-    browser.find_element_by_xpath("//input[@type='password']").send_keys(
-        config.PASSWORD[1:])  # вводим пароль
-    """
-    browser.find_element_by_xpath("(//input[@type='password'])[2]").send_keys(
-        config.PASSWORD)  # подтверждаем пароль
-    terms_and_conditions = browser.find_element_by_xpath(
-        "/html/body/div/div[2]/div/section/div/form/div/div/input[4]")  # определяем элемент чкубокс terms&conditions
-    browser.execute_script("arguments[0].click();", terms_and_conditions)  # соглашаемся с T&C
-    """
-    for iterable_element_in_sequence_of_numbers_created_by_range in range(12):
-        sleep(2)
-        try:
-            login_button = browser.find_element_by_xpath(
-                "/html/body/div/div[2]/div/section/div/form/div/div/div[8]/button")
-            login_button.click()
-        except NoSuchElementException:
-            print(f"Capcha, OK")
-            browser.save_screenshot(f"{screenshot_path}Capchadevnuxbet.png")
-            break
+    def input_login(self):
+        self.driver.interaction_with(Locators.INPUT_FIELD, text=config.AUTHORISATION_NAME)
 
+    def input_password(self):
+        self.driver.interaction_with(Locators.PASSWORD_FIELD, text=config.PASSWORD[1:])
 
-general_run()
-browser.close()
+    def check_captcha(self):
+        for _ in range(10):
+            try:
+                self.driver.interaction_with(Locators.LOGIN_BUTTON, clickable=True, click=True)
+            except TimeoutException:
+                iframe = self.driver.interaction_with("//iframe[@id='the_iframe']")
+                self.driver.switch_to_iframe(iframe)
+                re_captcha_iframe = self.driver.interaction_with("//iframe[@title='reCAPTCHA']")
+                return re_captcha_iframe.get_attribute('title')
