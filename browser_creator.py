@@ -1,10 +1,8 @@
 from selenium import webdriver
-import pytest
 
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
-from selenium.webdriver.common.by import By
 
 import config
 
@@ -33,19 +31,19 @@ class Driver:
     def go_to(self, url: str) -> None:
         self.browser.get(url)
 
-    def _wait_elems(self, xpath: str, timeout: int = 5) -> WebDriverWait:
-        return WebDriverWait(self.browser, timeout).until(ec.presence_of_all_elements_located((By.XPATH, xpath)))
+    def _wait_elems(self, phrase: tuple, timeout: int = 5) -> WebDriverWait:
+        return WebDriverWait(self.browser, timeout).until(ec.presence_of_all_elements_located(phrase))
 
     def get_screenshot(self, name: str) -> None:
-        self.browser.get_screenshot_as_file(f'./screenshots/{name}.png')
+        self.browser.get_screenshot_as_file(name)
 
     def switch_to_iframe(self, element):
         self.browser.switch_to.frame(element)
 
-    def interaction_with(self, xpath, timeout=10, clickable=False, scroll=False, click=False, text=None):
+    def interaction_with(self, phrase, timeout=10, clickable=False, scroll=False, click=False, text=None):
         """ Функция взаимодействия с элементомами. Возвращает запрошенный элемент """
         # Дожидаемся появления элемента на странице
-        elems = self._wait_elems(xpath, timeout)
+        elems = self._wait_elems(phrase, timeout)
 
         # Проверяем сколько элементов обнаружено
         if len(elems) > 1:
@@ -57,7 +55,7 @@ class Driver:
 
         if clickable:
             # Дожидаемся кликабельности элемента
-            WebDriverWait(self.browser, timeout).until(ec.element_to_be_clickable((By.XPATH, xpath)))
+            WebDriverWait(self.browser, timeout).until(ec.element_to_be_clickable(phrase))
 
         if scroll:
             # Скроллим элемент в пределы видимости:

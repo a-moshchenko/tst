@@ -20,16 +20,16 @@ class Locators(str, Enum):
 
 class LoginTest:
 
-    def __init__(self, driver):
+    def __init__(self, driver, base_url):
         self.driver = driver
-        self.base_url = config.SITE_PROD
+        self.base_url = base_url
 
     def open_site(self):
         self.driver.go_to(self.base_url)
 
     def open_login_form(self):
         self.driver.interaction_with(Locators.GO_TO_LOGIN, clickable=True, click=True)
-        time.sleep(.3)
+        time.sleep(1)
         return self.driver.interaction_with(Locators.LOGIN_FORM).text
 
     def valid_login(self):

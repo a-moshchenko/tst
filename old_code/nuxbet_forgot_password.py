@@ -61,7 +61,7 @@ def login():
     close_form_button.click()
     sleep(1)
     close_form_button.click()
-    browser.get(config.SITE+"tickets/create")
+    browser.get(config.SITE + "tickets/create")
     sleep(1)
     user_name = browser.find_element_by_xpath("/html/body/div/div[2]/div/section/div/form/div[1]/input")
     user_name.click()

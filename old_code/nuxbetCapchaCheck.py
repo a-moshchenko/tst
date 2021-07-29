@@ -14,9 +14,9 @@ class Locators(str, Enum):
 
 class CaptchaCheck:
 
-    def __init__(self, driver):
+    def __init__(self, driver, base_url):
         self.driver = driver
-        self.base_url = config.SITE
+        self.base_url = base_url
 
     def open_site(self):
         self.driver.go_to(self.base_url)
