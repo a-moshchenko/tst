@@ -4,13 +4,13 @@ from enum import Enum
 class SiteUrlEnum(str, Enum):
 
     DEV = "https://dev.nuxbet.com/"
-    PROD = "https://nuxbet.com/"
+    # PROD = "https://nuxbet.com/"
     SFRONT1 = "https://sfront1.nuxbet.com/"
     SFRONT3 = "https://sfront3.nuxbet.com/"
 
-    @classmethod
-    def to_dict(cls):
-        return {i.name: i.value for i in cls}
+
+    def __str__(self):
+        return str(self.value)
 
 
 class CredentialEnum(str, Enum):

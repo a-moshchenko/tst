@@ -40,7 +40,7 @@ class Driver:
     def switch_to_iframe(self, element):
         self.browser.switch_to.frame(element)
 
-    def interaction_with(self, phrase, timeout=10, clickable=False, scroll=False, click=False, text=None):
+    def interaction_with(self, phrase, timeout=3, clickable=False, scroll=False, click=False, text=None):
         """ Функция взаимодействия с элементомами. Возвращает запрошенный элемент """
         # Дожидаемся появления элемента на странице
         elems = self._wait_elems(phrase, timeout)
